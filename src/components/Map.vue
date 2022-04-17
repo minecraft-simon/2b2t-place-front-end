@@ -1,0 +1,168 @@
+<template>
+  <div :style="divStyle" id="canvasContainer" ref="canvasContainer" class="interpolation-nn">
+    <img src="@/assets/map-background.png" id="mapBackground" ref="mapBackground" class="interpolation-nn">
+    <canvas id="myCanvas" ref="myCanvas" :width="cols * cellSize" :height="rows * cellSize"
+            class="interpolation-nn"></canvas>
+  </div>
+</template>
+
+<script>
+import mitt from "mitt";
+
+window.mitt = window.mitt || new mitt();
+
+export default {
+  name: "Map",
+  data() {
+    return {
+      rows: 128,
+      cols: 128,
+      cellSize: 10,
+      colors_old: {
+        "red": "#8e2020",
+        "orange": "#e06100",
+        "yellow": "#f1af15",
+        "lime": "#5ea818",
+        "green": "#495b24",
+        "cyan": "#157788",
+        "light-blue": "#2389c6",
+        "blue": "#2c2e8f",
+        "purple": "#641f9c",
+        "magenta": "#a9309f",
+        "pink": "#d5648e",
+        "brown": "#603b1f",
+        "black": "#080a0f",
+        "gray": "#36393d",
+        "light-gray": "#7d7d73",
+        "white": "#cfd5d6"
+      },
+      colors: [
+        "#8e2020", "#e06100", "#f1af15", "#5ea818",
+        "#495b24", "#157788", "#2389c6", "#2c2e8f",
+        "#641f9c", "#a9309f", "#d5648e", "#603b1f",
+        "#080a0f", "#36393d", "#7d7d73", "#cfd5d6"
+      ],
+      canvasContext: null
+    }
+  },
+  computed: {
+    canvasWidth() {
+      return this.cols * this.cellSize
+    },
+    canvasHeight() {
+      return this.rows * this.cellSize
+    },
+    divStyle() {
+      return {
+        'background-color2': 'green',
+        'width': this.cols * this.cellSize + 'px',
+        'height': this.rows * this.cellSize + 'px'
+      }
+    }
+  },
+  mounted() {
+    let canvas = document.getElementById("myCanvas");
+    let ctx = canvas.getContext("2d");
+    this.canvasContext = ctx
+    // draw chessboard pattern
+    for (let x = 0; x < this.cols; x++) {
+      for (let y = 0; y < this.rows; y++) {
+        let color
+        if ((x + y) % 2 === 0) {
+          ctx.fillStyle = "#f3f3f3";
+        } else {
+          ctx.fillStyle = "#fafafa";
+        }
+        ctx.fillStyle = color;
+        ctx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+      }
+    }
+
+    let canvasContainer = this.$refs.canvasContainer
+
+    window.mitt.on("clickReceiverLocation", data => {
+      let transform = canvasContainer.style.transform;
+      transform = transform.replace("matrix(", "").replace(")", "")
+      transform = transform.split(", ")
+      let offsetX = transform[4]
+      let offsetY = transform[5]
+      let canvasX = Math.floor((data.x - offsetX) / transform[0] / this.cellSize)
+      let canvasY = Math.floor((data.y - offsetY) / transform[0] / this.cellSize)
+
+      if (canvasX < 0 || canvasX >= this.cols || canvasY < 0 || canvasY >= this.rows) {
+        return
+      }
+
+      let pos = {
+        x: canvasX,
+        y: canvasY,
+      }
+      window.mitt.emit("pixelSelected", pos)
+    });
+
+    window.mitt.on("updatePixel", data => {
+      this.drawPixel(data.x, data.y, data.color)
+    })
+
+    window.mitt.on("setPixelGrid", pixelString => {
+      if (!this.canvasContext) return
+      let ctx = this.canvasContext
+      let s = this.cellSize
+      let counter = 0
+      for (let x = 0; x < this.cols; x++) {
+        for (let y = 0; y < this.rows; y++) {
+          let pixelColor = pixelString.charCodeAt(counter)
+          if (pixelColor !== undefined && pixelColor < 16) {
+            ctx.fillStyle = this.colors[pixelColor]
+          } else {
+            ctx.fillStyle = "white";
+          }
+          ctx.fillRect(x * s, y * s, s, s)
+          counter++;
+        }
+      }
+
+    })
+
+    this.setBackgroundScale()
+  },
+  methods: {
+    setBackgroundScale() {
+      this.$refs.mapBackground.style.transform = "translate(-50%, -50%) translate(" + this.canvasWidth / 2 + "px, " + this.canvasHeight / 2 + "px) scale(" + this.cellSize * 0.88 + ")";
+    },
+    drawPixel(x, y, color) {
+      let ctx = this.canvasContext
+      let s = this.cellSize
+      ctx.fillStyle = this.colors[color]
+      ctx.fillRect(x * s, y * s, s, s)
+    }
+  }
+}
+</script>
+
+<style scoped>
+#canvasContainer {
+  position: relative;
+}
+
+#mapBackground {
+  position: absolute;
+  /*transform: translate(-16px, -16px) scale(0.88);*/
+  /*transform: translate(-50%, -50%);*/
+}
+
+#myCanvas {
+  /*transform: translate(-50%, -50%) scale(0.1) translate(50%, 50%);*/
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+</style>
+
+<style>
+.vue-pan-zoom-scene {
+  height: 100%;
+}
+
+</style>

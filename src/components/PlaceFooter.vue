@@ -4,13 +4,13 @@
       <div
           class="button-container d-flex flex-row flex-lg-wrap justify-lg-center pl-4 pr-2 pb-2 pt-4 pb-lg-0 pt-lg-2"
           style="max-width: 1140px; overflow: auto; margin: auto;">
-        <div v-for="(color, i) in colors" :key="color" class="mr-4 mb-4 mr-lg-2 mb-lg-2">
+        <div v-for="colorId in colorOrder" :key="colorId" class="mr-4 mb-4 mr-lg-2 mb-lg-2">
           <v-btn tile color="black" :x-large="xLarge" class="grey lighten-2 px-3 px-md-3"
                  :style="'height: ' + buttonHeight + 'px'"
-                 @click="colorClicked(i)">
-            <v-img :src="getColorThumbnail(color)" class="interpolation-nn mr-3 mr-lg-2" :width="thumbnailWidth"
+                 @click="colorClicked(colorId)">
+            <v-img :src="getColorThumbnail(colors[colorId])" class="interpolation-nn mr-3 mr-lg-2" :width="thumbnailWidth"
                    contain></v-img>
-            <div v-text="color.replace('-', ' ')"></div>
+            <div v-text="colors[colorId].replace('_', ' ')"></div>
           </v-btn>
         </div>
       </div>
@@ -33,23 +33,12 @@ export default {
   data() {
     return {
       colors: [
-        "red",
-        "orange",
-        "yellow",
-        "lime",
-        "green",
-        "cyan",
-        "light-blue",
-        "blue",
-        "purple",
-        "magenta",
-        "pink",
-        "brown",
-        "black",
-        "gray",
-        "light-gray",
-        "white"
+        "white", "orange", "magenta", "light_blue",
+        "yellow", "lime", "pink", "gray",
+        "light_gray", "cyan", "purple", "blue",
+        "brown", "green", "red", "black"
       ],
+      colorOrder: [14, 1, 4, 5, 13, 9, 3, 11, 10, 2, 6, 12, 15, 7, 8, 0],
       showScrollHint: true
     }
   },

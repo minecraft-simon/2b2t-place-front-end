@@ -18,29 +18,11 @@ export default {
       rows: 128,
       cols: 128,
       cellSize: 10,
-      colors_old: {
-        "red": "#8e2020",
-        "orange": "#e06100",
-        "yellow": "#f1af15",
-        "lime": "#5ea818",
-        "green": "#495b24",
-        "cyan": "#157788",
-        "light-blue": "#2389c6",
-        "blue": "#2c2e8f",
-        "purple": "#641f9c",
-        "magenta": "#a9309f",
-        "pink": "#d5648e",
-        "brown": "#603b1f",
-        "black": "#080a0f",
-        "gray": "#36393d",
-        "light-gray": "#7d7d73",
-        "white": "#cfd5d6"
-      },
       colors: [
-        "#8e2020", "#e06100", "#f1af15", "#5ea818",
-        "#495b24", "#157788", "#2389c6", "#2c2e8f",
-        "#641f9c", "#a9309f", "#d5648e", "#603b1f",
-        "#080a0f", "#36393d", "#7d7d73", "#cfd5d6"
+        "#cfd5d6", "#e06100", "#a9309f", "#2389c6",
+        "#f1af15", "#5ea818", "#d5648e", "#36393d",
+        "#7d7d73", "#157788", "#641f9c", "#2c2e8f",
+        "#603b1f", "#495b24", "#8e2020", "#080a0f"
       ],
       canvasContext: null
     }

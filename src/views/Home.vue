@@ -14,7 +14,5 @@ export default {
 </script>
 
 <style>
-.asdf {
-  transform: matrix(20, 0, 0, 20, 0, 0);
-}
+
 </style>

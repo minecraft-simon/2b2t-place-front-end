@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialogOpen" fullscreen hide-overlay transition="none">
-      <v-card>
+      <v-card class="semi-transparent">
         <v-toolbar dark color="gray" @click="closeDialog">
           <v-spacer></v-spacer>
           <v-toolbar-title>Choose Color</v-toolbar-title>
@@ -70,5 +70,7 @@ export default {
 </script>
 
 <style scoped>
-
+.semi-transparent2 {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
 </style>

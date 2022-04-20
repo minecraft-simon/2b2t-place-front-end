@@ -5,7 +5,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/",
+    path: "/asdf",
     name: "Home",
     component: () =>
         import(/* webpackChunkName: "home" */ "../views/Home.vue")
@@ -16,9 +16,16 @@ const routes = [
     component: () =>
         import(/* webpackChunkName: "place" */ "../views/Place.vue")
   },
+  {
+    path: "*",
+    redirect: to => {
+      return { path: '/place' }
+    }
+  }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 

@@ -36,7 +36,6 @@ export default {
     },
     divStyle() {
       return {
-        'background-color2': 'green',
         'width': this.cols * this.cellSize + 'px',
         'height': this.rows * this.cellSize + 'px'
       }

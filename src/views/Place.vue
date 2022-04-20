@@ -14,6 +14,7 @@
       </div>
     </v-main>
     <PlaceFooter></PlaceFooter>
+    <ColorChooserDialog></ColorChooserDialog>
   </div>
 </template>
 
@@ -21,6 +22,7 @@
 import mitt from "mitt";
 import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
+import ColorChooserDialog from "@/components/ColorChooserDialog";
 
 window.mitt = window.mitt || new mitt();
 
@@ -35,7 +37,7 @@ export default {
       selectionHighlights: []
     }
   },
-  components: {Map, PlaceFooter},
+  components: {ColorChooserDialog, Map, PlaceFooter},
   mounted() {
     this.generateRandomId();
     this.initListeners();

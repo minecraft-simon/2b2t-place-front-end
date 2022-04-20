@@ -16,6 +16,11 @@
       <span class="d-none d-lg-flex d-xl-none">LG</span>
       <span class="d-none d-xl-flex">XL</span>
     </v-btn>
+
+    <div class="d-flex align-center player-head" @click="playerHeadClicked">
+      <v-img class="" contain src="@/assets/steve.png" width="40"/>
+    </div>
+
   </v-app-bar>
 </template>
 
@@ -29,6 +34,11 @@ export default {
     helpersHidden: function () {
       return process.env.NODE_ENV !== "development";
     }
+  },
+  methods: {
+    playerHeadClicked() {
+      alert("You are not authenticated.")
+    }
   }
 }
 </script>
@@ -36,5 +46,9 @@ export default {
 <style scoped>
 .place-app-bar {
   background-color: rgba(0, 0, 0, 0.5) !important;
+}
+.player-head {
+  cursor: pointer;
+  box-shadow: 0px 0px 4px 1px rgba(200, 200, 200, 0.8);
 }
 </style>

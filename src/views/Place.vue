@@ -176,7 +176,7 @@ export default {
   background-size: cover;
   background: radial-gradient(ellipse, transparent 30%, rgba(0, 0, 0, 0.6) 100%),
     /*linear-gradient(transparent 60%, rgba(0, 0, 0, 0.75) 95%),*/ linear-gradient(rgba(100, 100, 100, 0.4), rgba(100, 100, 100, 0.4)),
-  url('~@/assets/spawn-render.webp') right;
+  url('~@/assets/spawn-render.jpg') right;
 }
 
 #placeContainer {

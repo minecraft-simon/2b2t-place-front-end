@@ -1,32 +1,31 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="dialogOpen" fullscreen hide-overlay transition="none">
-      <v-card class="semi-transparent">
-        <v-toolbar dark color="gray" @click="closeDialog">
-          <v-spacer></v-spacer>
-          <v-toolbar-title>Choose Color</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon dark @click="closeDialog">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-container class="pa-0 pt-3 pl-1 pr-2 pb-4">
-          <v-row no-gutters justify="center">
-            <v-col v-for="colorId in colorOrder" :key="colorId" class="col-6 col-sm-4 col-md-3 d-flex justify-center pl-2 pr-1 pb-3">
-              <v-btn color="black" class="flex-grow-1 grey lighten-2 pl-3 pr-1"
-                     :style="'height: ' + 50 + 'px'"
-                     @click="colorClicked(colorId)">
-                <v-img :src="getColorThumbnail(colors[colorId])" class="interpolation-nn mr-31 mr-lg-21" width="32"
-                       :max-width="32"
-                       contain></v-img>
-                <div v-text="colors[colorId].replace('_', ' ').replace('light', 'l.')" class="flex-grow-1"></div>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card>
-    </v-dialog>
-  </v-row>
+  <v-dialog v-model="dialogOpen" fullscreen hide-overlay transition="dialog-bottom-transition">
+    <v-card class="semi-transparent">
+      <v-toolbar dark color="gray" @click="closeDialog">
+        <v-spacer></v-spacer>
+        <v-toolbar-title>Choose Color</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon dark @click="closeDialog">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-container class="pa-0 pt-3 pl-1 pr-2 pb-4">
+        <v-row no-gutters justify="center">
+          <v-col v-for="colorId in colorOrder" :key="colorId"
+                 class="col-6 col-sm-4 col-md-3 d-flex justify-center pl-2 pr-1 pb-3">
+            <v-btn color="black" class="flex-grow-1 grey lighten-2 pl-3 pr-1"
+                   :style="'height: ' + 50 + 'px'"
+                   @click="colorClicked(colorId)">
+              <v-img :src="getColorThumbnail(colors[colorId])" class="interpolation-nn mr-31 mr-lg-21" width="32"
+                     :max-width="32"
+                     contain></v-img>
+              <div v-text="colors[colorId].replace('_', ' ').replace('light', 'l.')" class="flex-grow-1"></div>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>

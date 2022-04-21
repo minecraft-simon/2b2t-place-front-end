@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import mitt from "mitt";
+window.mitt = window.mitt || new mitt();
+
 export default {
   name: "AppBar",
   data: () => ({
@@ -37,7 +40,7 @@ export default {
   },
   methods: {
     playerHeadClicked() {
-      alert("You are not authenticated.")
+      window.mitt.emit("openAuthenticationDialog", null)
     }
   }
 }

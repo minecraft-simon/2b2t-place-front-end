@@ -4,7 +4,7 @@
       <div
           class="button-container d-flex d-lg-none flex-row flex-lg-wrap align-center px-3 flex-grow-0"
           style="height: 80px; overflow: auto; margin: auto;">
-        <v-btn tile depressed color="black" class="grey lighten-1" style="height: 50px" @click="openColorDialog">
+        <v-btn tile depressed color="black" class="grey lighten-1" style="height: 50px" @click="requestOpenColorDialog">
           <v-icon left>mdi-dots-vertical</v-icon>
           Colors
         </v-btn>
@@ -60,8 +60,8 @@ export default {
     })
   },
   methods: {
-    openColorDialog() {
-      window.mitt.emit("openColorDialog", null)
+    requestOpenColorDialog() {
+      window.mitt.emit("requestOpenColorDialog", null)
     },
     getColorThumbnail(colorId) {
       let colorName = this.colorNames[colorId].replace(" ", "-")

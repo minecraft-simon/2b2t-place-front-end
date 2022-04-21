@@ -91,6 +91,18 @@ export default {
     initMittListeners() {
       window.mitt.on("pixelSelected", pos => {
         this.selectedPixelPos = pos
+
+        // reset the highlight animation
+        let selectedPixelDiv = this.$refs.selectedPixelDiv;
+        selectedPixelDiv.style.animation = 'none';
+        selectedPixelDiv.offsetHeight;
+        selectedPixelDiv.style.animation = null;
+        // enable the highlight transition
+        selectedPixelDiv.style.transition = 'all 0.1s ease-out';
+        //play the pop sound
+        this.stop()
+        this.play()
+
         this.refreshOverlays();
       })
       window.mitt.on("colorClicked", color => {
@@ -114,16 +126,11 @@ export default {
         y: y - barHeight
       }
       window.mitt.emit("clickReceiverLocation", data)
-
-      let selectedPixelDiv = this.$refs.selectedPixelDiv;
-      selectedPixelDiv.style.animation = 'none';
-      selectedPixelDiv.offsetHeight;
-      selectedPixelDiv.style.animation = null;
-      this.stop()
-      this.play()
     },
     panZoomTransform() {
       this.refreshOverlays()
+      let selectedPixelDiv = this.$refs.selectedPixelDiv;
+      selectedPixelDiv.style.transition = 'none'
     },
     refreshOverlays() {
       if (this.instance) {
@@ -254,6 +261,7 @@ export default {
   position: absolute;
   display: none;
   pointer-events: none;
+  transition: all 1s ease-out;
   animation: breathe 1.5s ease-in-out infinite;
 }
 

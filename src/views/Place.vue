@@ -3,7 +3,7 @@
     <v-main class="fill-height">
       <div id="placeContainer" ref="clickReceiver">
         <div id="panZoomContainer" ref="panZoomContainer">
-          <panZoom :options="{minZoom: 0.18, maxZoom: 20, initialZoom2: 1, bounds: true, boundsPadding: 0.1}"
+          <panZoom :options="{minZoom: 0.18, maxZoom: 6, initialZoom2: 1, bounds: true, boundsPadding: 0.1}"
                    style2="background-color: yellow" class="fill-height"
                    @init="initPanZoom" @transform="panZoomTransform">
             <Map></Map>
@@ -32,7 +32,8 @@
 
 <script>
 import { useSound } from '@vueuse/sound';
-import click from '../assets/click-sound.mp3';
+import click from '../assets/sound-click.mp3';
+import pop from '../assets/sound-pop.mp3';
 import mitt from "mitt";
 import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
@@ -60,11 +61,10 @@ export default {
     }
   },
   setup() {
-    const { play, stop } = useSound(click)
-
+    const clickSound = useSound(click)
+    const popSound = useSound(pop)
     return {
-      play,
-      stop,
+      clickSound, popSound
     }
   },
   mounted() {
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     initEventListeners() {
-      this.$refs.clickReceiver.addEventListener("click", ev => {
+      this.$refs.clickReceiver.addEventListener("mousedown", ev => {
         let clientX = ev.clientX;
         let clientY = ev.clientY;
         this.locationSelected(clientX, clientY)
@@ -100,9 +100,8 @@ export default {
         // enable the highlight transition
         selectedPixelDiv.style.transition = 'all 0.1s ease-out';
         //play the pop sound
-        this.stop()
-        this.play()
-
+        this.clickSound.stop()
+        this.clickSound.play()
         this.refreshOverlays();
       })
       window.mitt.on("colorClicked", color => {
@@ -129,6 +128,7 @@ export default {
     },
     panZoomTransform() {
       this.refreshOverlays()
+      // cancel highlight transition effect
       let selectedPixelDiv = this.$refs.selectedPixelDiv;
       selectedPixelDiv.style.transition = 'none'
     },
@@ -223,6 +223,7 @@ export default {
           color: color
         }
         this.$store.dispatch("putRequest", ["pixel-grid", pixel, this.sendPixelCallback])
+        this.popSound.play();
       } else {
         alert("No pixel selected")
       }

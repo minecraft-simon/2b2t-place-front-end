@@ -3,7 +3,7 @@
     <v-card class="semi-transparent">
       <v-toolbar dark color="gray" @click="closeDialog">
         <v-spacer></v-spacer>
-        <v-toolbar-title>Choose Color</v-toolbar-title>
+        <v-toolbar-title>Colors</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon dark @click="closeDialog">
           <v-icon>mdi-close</v-icon>

@@ -32,8 +32,9 @@
 
 <script>
 import { useSound } from '@vueuse/sound';
-import click from '../assets/sound-click.mp3';
-import pop from '../assets/sound-pop.mp3';
+import pixelSoundFile from '@/assets/sounds/pixel-selected.mp3';
+import colorSoundFile from '@/assets/sounds/color-placed.mp3';
+import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import mitt from "mitt";
 import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
@@ -61,10 +62,10 @@ export default {
     }
   },
   setup() {
-    const clickSound = useSound(click)
-    const popSound = useSound(pop)
+    const pixelSound = useSound(pixelSoundFile)
+    const colorSound = useSound(colorSoundFile)
     return {
-      clickSound, popSound
+      pixelSound, colorSound
     }
   },
   mounted() {
@@ -100,8 +101,8 @@ export default {
         // enable the highlight transition
         selectedPixelDiv.style.transition = 'all 0.1s ease-out';
         //play the pop sound
-        this.clickSound.stop()
-        this.clickSound.play()
+        this.pixelSound.stop()
+        this.pixelSound.play()
         this.refreshOverlays();
       })
       window.mitt.on("colorClicked", color => {
@@ -223,7 +224,7 @@ export default {
           color: color
         }
         this.$store.dispatch("putRequest", ["pixel-grid", pixel, this.sendPixelCallback])
-        this.popSound.play();
+        this.colorSound.play();
       } else {
         alert("No pixel selected")
       }

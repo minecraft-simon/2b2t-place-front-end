@@ -24,7 +24,11 @@
 
         <div class="text-body-2 mt-4" style="text-decoration: underline">Step 2:</div>
 
-        <div v-if="!authCode && botName">
+        <div v-if="pendingAuthExpired">
+          <div class="text-body-1">Your auth code has expired. Please request a new one.</div>
+          <v-btn small block outlined class="mt-1" @click="requestAuthCode">Request new auth code</v-btn>
+        </div>
+        <div v-else-if="!(authCode && botName)">
           <div class="d-flex flex-row align-start justify-center2 mt-1">
             <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
             <div class="text-body-1 ml-3">Generating auth code...</div>
@@ -41,7 +45,8 @@
           <div>/whisper {{ botName + " " + authCode }}</div>
 
           <div class="text-body-2 mt-4" style="text-decoration: underline">Step 3:</div>
-          <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing pixels!</div>
+          <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing pixels!
+          </div>
           <div class="d-flex flex-row align-center justify-center mt-5">
             <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
             <div class="text-body-1 ml-3">Waiting for your message...</div>
@@ -64,16 +69,10 @@ export default {
     return {
       dialogOpen: false,
       authCode: null,
-      botName: null
+      botName: null,
+      pendingAuthExpired: false,
+      pendingAuthExpiredTimeout: null
     }
-  },
-  mounted() {
-    window.mitt.on("openAuthenticationDialog", () => {
-      this.dialogOpen = true
-      this.authCode = null
-      this.botName = null
-      this.requestAuthCode();
-    })
   },
   computed: {
     fullscreen() {
@@ -83,18 +82,39 @@ export default {
       return this.$store.state.sessionId;
     }
   },
+  mounted() {
+    window.mitt.on("openAuthenticationDialog", () => {
+      this.dialogOpen = true
+      this.requestAuthCode();
+    })
+  },
   methods: {
     closeDialog() {
       this.dialogOpen = false
     },
     requestAuthCode() {
+      this.authCode = null
+      this.botName = null
+      this.pendingAuthExpired = false
       this.$store.dispatch("postRequest", ["authentication/request-auth-code/" + this.sessionId, null, this.requestAuthCodeCallback])
     },
     requestAuthCodeCallback(data) {
       if (data) {
         this.authCode = data["authCode"];
         this.botName = "minecraft_simon";
+        let expirySeconds = data["expirySeconds"];
+        // start timeout to show expiry of auth code
+        let pendingAuthExpiredFunc = this.setPendingAuthExpired
+        clearTimeout(this.pendingAuthExpiredTimeout)
+        this.pendingAuthExpiredTimeout = setTimeout(function () {
+          pendingAuthExpiredFunc(true)
+        }, expirySeconds * 1000);
+      } else {
+        // TODO
       }
+    },
+    setPendingAuthExpired(value) {
+      this.pendingAuthExpired = value
     }
   }
 }

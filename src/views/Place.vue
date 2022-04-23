@@ -34,7 +34,6 @@
 import { useSound } from '@vueuse/sound';
 import pixelSoundFile from '@/assets/sounds/pixel-selected.mp3';
 import colorSoundFile from '@/assets/sounds/color-placed.mp3';
-import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import mitt from "mitt";
 import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
@@ -199,14 +198,20 @@ export default {
     sendStatusUpdate() {
       let statusUpdate = {
         sessionId: this.sessionId,
-        highlightPos: this.selectedPixelPos,
-        requestAuthToken: true
+        highlightPos: this.selectedPixelPos
       }
       this.$store.dispatch("putRequest", ["status", statusUpdate, this.statusUpdateCallback])
     },
     statusUpdateCallback(data) {
       let pollingTimeout = 1000
       if (data) {
+        // handle player auth data
+        let identity = data["identity"];
+        let authToken = data["authToken"];
+        if (identity && authToken) {
+          this.$store.dispatch("updateIdentityAndAuthToken", [identity, authToken])
+        }
+
         this.selectionHighlights = data["highlights"]
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)

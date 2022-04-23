@@ -2,7 +2,7 @@
   <v-app-bar app dark flat class="place-app-bar">
     <div class="d-flex align-center">
       <v-img class="" contain src="@/assets/2b2t.png" width="40"/>
-      <v-img class="" contain height="36" max-width="120" src="@/assets/place.png"/>
+      <v-img class="ml-2" contain height="36" max-width="160" src="@/assets/place.png"/>
     </div>
 
     <v-spacer></v-spacer>
@@ -17,8 +17,9 @@
       <span class="d-none d-xl-flex">XL</span>
     </v-btn>
 
-    <div class="d-flex align-center player-head" @click="playerHeadClicked">
-      <v-img class="" contain src="@/assets/steve.png" width="40"/>
+    <div class="d-flex align-center player-head" @click="playerHeadClicked" style="min-width: 40px; min-height: 40px; background-color: grey">
+      <v-img v-if="identity === null" class="" contain src="@/assets/steve.png" width="40"/>
+      <v-img v-else class="" contain :src="playerHeadUrl" width="40"/>
     </div>
 
   </v-app-bar>
@@ -26,16 +27,23 @@
 
 <script>
 import mitt from "mitt";
+
 window.mitt = window.mitt || new mitt();
 
 export default {
   name: "AppBar",
   data: () => ({
-    hideSizeHelper: false
+    hideSizeHelper: true
   }),
   computed: {
     helpersHidden: function () {
       return process.env.NODE_ENV !== "development";
+    },
+    identity() {
+      return this.$store.state.identity;
+    },
+    playerHeadUrl() {
+      return "https://mc-heads.net/avatar/" + this.identity
     }
   },
   methods: {
@@ -50,6 +58,7 @@ export default {
 .place-app-bar {
   background-color: rgba(0, 0, 0, 0.5) !important;
 }
+
 .player-head {
   cursor: pointer;
   box-shadow: 0px 0px 4px 1px rgba(200, 200, 200, 0.8);

@@ -8,6 +8,7 @@
 <script>
 
 import AppBar from "@/components/AppBar";
+
 export default {
   name: 'App',
   components: {AppBar},
@@ -23,9 +24,7 @@ export default {
     $body.style.top = `-${scrollPosition}px`;
     $body.style.width = '100%';
   },
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 
@@ -43,4 +42,9 @@ body {
   image-rendering: pixelated;
 }
 
+
+@font-face {
+  font-family: "Minecraftia";
+  src: url(./assets/fonts/Minecraftia.ttf) format("truetype");
+}
 </style>

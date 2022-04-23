@@ -199,7 +199,8 @@ export default {
     sendStatusUpdate() {
       let statusUpdate = {
         sessionId: this.sessionId,
-        highlightPos: this.selectedPixelPos
+        highlightPos: this.selectedPixelPos,
+        requestAuthCode: true
       }
       this.$store.dispatch("putRequest", ["status", statusUpdate, this.statusUpdateCallback])
     },

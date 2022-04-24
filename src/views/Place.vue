@@ -236,7 +236,6 @@ export default {
         }
         if (this.identity !== null) {
           this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
-          this.colorSound.play();
         } else {
           window.mitt.emit("openAuthenticationDialog")
         }
@@ -247,6 +246,7 @@ export default {
     sendPixelCallback(pixel) {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
+        this.colorSound.play();
       }
     }
   }

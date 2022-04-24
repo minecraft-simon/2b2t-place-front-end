@@ -9,7 +9,7 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-container class="pt-4 pt-sm-8 pb-8" fluid style="max-width: 320px">
+      <v-container class="pt-4 pt-sm-4 pb-8" fluid :style="'max-width: 320px; ' + (contentHidden ? 'opacity: 0' : 'opacity: 1')">
         <div v-if="identity === null">
           <div class="text-body-1">
             In order to place pixels you need to link your Minecraft username. No e-mail-address or password required!
@@ -57,11 +57,11 @@
         <div v-else>
           <div class="d-flex flex-column align-center mt-2">
             <div class="logged-in-text">You are logged in as:</div>
-            <v-img :src="playerSkinUrl" class="mt-4 player-skin" height="200" contain></v-img>
-            <div v-text="identity" class="player-name mt-4"></div>
+            <v-img :src="playerSkinUrl" class="mt-5 player-skin" height="200" contain></v-img>
+            <div v-text="identity" class="player-name mt-5"></div>
           </div>
-          <div class="d-flex flex-row mt-6">
-            <v-btn outlined class="mr-2" color="red darken-3" @click="logOut">Log out</v-btn>
+          <div class="d-flex flex-row mt-10">
+            <v-btn outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="grey darken-3" dark @click="dialogOpen = false">Continue</v-btn>
           </div>
@@ -75,9 +75,8 @@
 <script>
 import {useSound} from '@vueuse/sound';
 import authSoundFile from '@/assets/sounds/auth-success.mp3';
+import logOutSoundFile from '@/assets/sounds/log-out.mp3';
 import mitt from "mitt";
-import pixelSoundFile from "@/assets/sounds/pixel-selected.mp3";
-import colorSoundFile from "@/assets/sounds/color-placed.mp3";
 import Vue from "vue";
 
 window.mitt = window.mitt || new mitt();
@@ -90,7 +89,9 @@ export default {
       authCode: null,
       botName: null,
       pendingAuthExpired: false,
-      pendingAuthExpiredTimeout: null
+      pendingAuthExpiredTimeout: null,
+      loggingOut: true,
+      contentHidden: false
     }
   },
   computed: {
@@ -109,19 +110,26 @@ export default {
   },
   setup() {
     const authSound = useSound(authSoundFile)
+    const logOutSound = useSound(logOutSoundFile)
     return {
-      authSound
+      authSound, logOutSound
     }
   },
   mounted() {
     window.mitt.on("openAuthenticationDialog", () => {
+      this.contentHidden = false
       this.dialogOpen = true
-      this.requestAuthCode();
+      this.loggingOut = false
+      if (this.identity === null) {
+        this.requestAuthCode();
+      }
     })
   },
   watch: {
     identity(value) {
       if (value != null) {
+        this.authSound.play();
+        this.authSound.stop();
         this.authSound.play();
       }
     }
@@ -158,10 +166,17 @@ export default {
       Vue.$cookies.remove("2b2t-our-place-identity");
       Vue.$cookies.remove("2b2t-our-place-token");
       this.$store.dispatch("deleteRequest", ["authentication/invalidate-pending-auth/" + this.sessionId, this.logOutCallback])
+      this.loggingOut = true
     },
     logOutCallback() {
+      setTimeout(this.logOutConfirm, 500);
+    },
+    logOutConfirm() {
+      this.logOutSound.play();
       this.$store.dispatch("updateIdentityAndAuthToken", [null, null])
+      this.contentHidden = true
       this.dialogOpen = false
+      this.loggingOut = false
     }
   }
 }
@@ -172,6 +187,10 @@ export default {
   font-size: 14pt;
   font-weight: bolder;
 }
+.logged-in-text {
+  font-size: 14pt;
+}
+
 .player-name {
   /*background-color: grey;
   color: white; */

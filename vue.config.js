@@ -4,7 +4,7 @@ module.exports = {
     ],
     devServer: {
         disableHostCheck: true,
-        port: 80
+        port: 1180
     },
     chainWebpack: config => {
         config

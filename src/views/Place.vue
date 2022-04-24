@@ -26,6 +26,7 @@
     </v-main>
     <PlaceFooter></PlaceFooter>
     <ColorChooserDialog></ColorChooserDialog>
+    <SelectPixelDialog></SelectPixelDialog>
     <AuthenticationDialog></AuthenticationDialog>
   </div>
 </template>
@@ -39,6 +40,7 @@ import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
 import ColorChooserDialog from "@/components/ColorChooserDialog";
 import AuthenticationDialog from "@/components/AuthenticationDialog";
+import SelectPixelDialog from "@/components/SelectPixelDialog";
 
 window.mitt = window.mitt || new mitt();
 
@@ -54,8 +56,11 @@ export default {
       pixelHighlightImageScale: 1
     }
   },
-  components: {AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
+  components: {SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
   computed: {
+    identity() {
+      return this.$store.state.identity;
+    },
     sessionId() {
       return this.$store.state.sessionId;
     }
@@ -111,7 +116,7 @@ export default {
         if (this.selectedPixelPos) {
           window.mitt.emit("openColorDialog")
         } else {
-          alert("No pixel selected")
+          window.mitt.emit("openSelectPixelDialog")
         }
       })
     },
@@ -229,10 +234,14 @@ export default {
           y: this.selectedPixelPos.y,
           color: color
         }
-        this.$store.dispatch("putRequest", ["pixel-grid", pixel, this.sendPixelCallback])
-        this.colorSound.play();
+        if (this.identity !== null) {
+          this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
+          this.colorSound.play();
+        } else {
+          window.mitt.emit("openAuthenticationDialog")
+        }
       } else {
-        alert("No pixel selected")
+        window.mitt.emit("openSelectPixelDialog")
       }
     },
     sendPixelCallback(pixel) {

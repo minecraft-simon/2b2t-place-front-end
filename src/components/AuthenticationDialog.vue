@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialogOpen" max-width="400">
+  <v-dialog v-model="dialogOpen" max-width="400" :fullscreen="fullscreen">
     <v-card>
       <v-toolbar dark color="gray" @click="closeDialog">
         <v-spacer></v-spacer>
@@ -183,6 +183,10 @@ export default {
 </script>
 
 <style scoped>
+.full-width-dialog {
+  margin-left: 0;
+  margin-right: 0;
+}
 .text-highlight {
   font-size: 14pt;
   font-weight: bolder;

@@ -10,7 +10,7 @@
         </v-btn>
         <div v-for="(colorId, i) in recentColors" :key="colorId" class="d-flex flex-row">
           <v-btn icon style="height: 64px; width: 64px" @click="recentColorClicked(colorId)">
-            <v-img :src="getColorThumbnail(colorId)" class="interpolation-nn" :max-width="32" contain></v-img>
+            <v-img :src="getColorThumbnail(colorId)" class="color-mini-thumbnail" max-width="36" max-height="36" contain></v-img>
           </v-btn>
           <v-divider v-if="i < recentColors.length - 1" vertical dark class="my-2"></v-divider>
         </div>
@@ -23,7 +23,7 @@
           <v-btn tile color="black" class="grey lighten-2 px-3 px-md-3"
                  :style="'height: ' + 45 + 'px'"
                  @click="colorClicked(colorId)">
-            <v-img :src="getColorThumbnail(colorId)" class="interpolation-nn mr-3 mr-lg-2" :width="32"
+            <v-img :src="getColorThumbnail(colorId)" class="mr-3 mr-lg-2" :width="32" :height="32"
                    contain></v-img>
             <div v-text="colorNames[colorId].replace('_', ' ')"></div>
           </v-btn>
@@ -100,14 +100,7 @@ export default {
 
 }
 
-#scrollHintOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  font-size: 18pt;
+.color-mini-thumbnail {
+  filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.8));
 }
 </style>

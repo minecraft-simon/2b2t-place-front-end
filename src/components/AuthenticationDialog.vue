@@ -52,6 +52,9 @@
               <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
               <div class="text-body-1 ml-3">Waiting for your message...</div>
             </div>
+            <div class="d-flex justify-center mt-4">
+              <v-btn outlined @click="closeDialog">Cancel</v-btn>
+            </div>
           </div>
         </div>
         <div v-else>
@@ -116,7 +119,7 @@ export default {
     const logOutSound = useSound(logOutSoundFile, {volume})
 
     const preloadSounds = () => {
-      volume.value = 0.001
+      volume.value = 0.01
       authSound.play()
       logOutSound.play()
       setTimeout(resetVolume, 700)
@@ -124,6 +127,8 @@ export default {
 
     const resetVolume = () => {
       volume.value = 1
+      authSound.stop()
+      logOutSound.stop()
     }
 
     return {

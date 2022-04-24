@@ -16,7 +16,7 @@
             <v-btn color="black" class="flex-grow-1 grey lighten-2 pl-3 pr-1"
                    :style="'height: ' + 50 + 'px'"
                    @click="colorClicked(colorId)">
-              <v-img :src="getColorThumbnail(colors[colorId])" class="interpolation-nn mr-31 mr-lg-21" width="32"
+              <v-img :src="getColorThumbnail(colors[colorId])" class="mr-31 mr-lg-21" width="32"
                      :max-width="32"
                      contain></v-img>
               <div v-text="colors[colorId].replace('_', ' ').replace('light', 'l.')" class="flex-grow-1"></div>

@@ -95,8 +95,7 @@ export default {
       pendingAuthExpired: false,
       pendingAuthExpiredTimeout: null,
       loggingOut: true,
-      contentHidden: false,
-      soundsPreloaded: false
+      contentHidden: false
     }
   },
   computed: {
@@ -143,17 +142,11 @@ export default {
       if (this.identity === null) {
         this.requestAuthCode();
       }
-      if (!this.soundsPreloaded) {
-        this.preloadSounds()
-        this.soundsPreloaded = true
-      }
     })
   },
   watch: {
     identity(value) {
       if (value != null) {
-        this.authSound.play();
-        this.authSound.stop();
         this.authSound.play();
       }
     }
@@ -167,6 +160,7 @@ export default {
       this.botName = null
       this.pendingAuthExpired = false
       this.$store.dispatch("postRequest", ["authentication/request-auth-code/" + this.sessionId, null, this.requestAuthCodeCallback])
+      this.preloadSounds()
     },
     requestAuthCodeCallback(data) {
       if (data) {
@@ -201,6 +195,9 @@ export default {
       this.contentHidden = true
       this.dialogOpen = false
       this.loggingOut = false
+    },
+    playSoundTest() {
+      this.authSound.play()
     }
   }
 }

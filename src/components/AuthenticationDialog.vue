@@ -78,6 +78,7 @@ import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import logOutSoundFile from '@/assets/sounds/log-out.mp3';
 import mitt from "mitt";
 import Vue from "vue";
+import { ref, reactive } from '@vue/composition-api'
 
 window.mitt = window.mitt || new mitt();
 
@@ -91,7 +92,8 @@ export default {
       pendingAuthExpired: false,
       pendingAuthExpiredTimeout: null,
       loggingOut: true,
-      contentHidden: false
+      contentHidden: false,
+      soundsPreloaded: false
     }
   },
   computed: {
@@ -109,10 +111,23 @@ export default {
     }
   },
   setup() {
-    const authSound = useSound(authSoundFile)
-    const logOutSound = useSound(logOutSoundFile)
+    const volume = ref(1)
+    const authSound = useSound(authSoundFile, {volume})
+    const logOutSound = useSound(logOutSoundFile, {volume})
+
+    const preloadSounds = () => {
+      volume.value = 0.001
+      authSound.play()
+      logOutSound.play()
+      setTimeout(resetVolume, 700)
+    }
+
+    const resetVolume = () => {
+      volume.value = 1
+    }
+
     return {
-      authSound, logOutSound
+      authSound, logOutSound, preloadSounds
     }
   },
   mounted() {
@@ -122,6 +137,10 @@ export default {
       this.loggingOut = false
       if (this.identity === null) {
         this.requestAuthCode();
+      }
+      if (!this.soundsPreloaded) {
+        this.preloadSounds()
+        this.soundsPreloaded = true
       }
     })
   },

@@ -64,6 +64,7 @@ export default new Vuex.Store({
                     }
                 })
                 .catch(reason => {
+                    console.log(reason)
                     if (callback) {
                         callback(null);
                     }

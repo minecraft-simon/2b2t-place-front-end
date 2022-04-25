@@ -1,33 +1,55 @@
 <template>
-  <div id="placePage" class="fill-height">
-    <v-main class="fill-height">
-      <div id="placeContainer" ref="clickReceiver">
-        <div id="panZoomContainer" ref="panZoomContainer">
-          <panZoom :options="{minZoom: 0.18, maxZoom: 6, initialZoom2: 1, bounds: true, boundsPadding: 0.1}"
-                   style2="background-color: yellow" class="fill-height"
-                   @init="initPanZoom" @transform="panZoomTransform">
-            <Map></Map>
-          </panZoom>
-        </div>
-        <div id="selectedPixelDiv" ref="selectedPixelDiv">
-          <v-img :src="pixelHighlightImage" class="selected-pixel-image"
-                 :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
-        </div>
-        <div v-for="pos in 50" :key="pos" class="selection-highlight">
-          <v-img :src="pixelHighlightImage" class="highlight-image"
-                 :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
-        </div>
-        <div class="d-none">
-          <v-img src="@/assets/pixel-highlight/1.png" ref="highlight1Loader"></v-img>
-          <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
-          <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
-        </div>
+  <div  id="placePage" class="fill-height">
+
+    <div v-show="maintenanceMode || sessionExpired" class="fill-height">
+      <div class="d-flex justify-center align-center fill-height">
+        <v-sheet rounded elevation="5" class="pa-4">
+          <div class="d-flex flex-column align-center">
+            <div v-text="sessionExpired ? 'Your Session has Expired' : 'Web Page is in Maintenance Mode'" class="text-h5 text-center"></div>
+            <div v-if="sessionExpired" class="text-body-1 mt-4">Please reload the page.</div>
+            <v-btn v-if="sessionExpired" class="mt-4" color="grey darken-3" dark @click="reloadPage">
+              <v-icon left>mdi-reload</v-icon>
+              Reload
+            </v-btn>
+            <div v-if="maintenanceMode" class="text-body-1 mt-4">Please wait.</div>
+            <div v-if="maintenanceMode" class="text-body-1 mt-2 text-center">The web page will automatically refresh as soon as maintenance is over.</div>
+          </div>
+        </v-sheet>
       </div>
-    </v-main>
-    <PlaceFooter></PlaceFooter>
-    <ColorChooserDialog></ColorChooserDialog>
-    <SelectPixelDialog></SelectPixelDialog>
-    <AuthenticationDialog></AuthenticationDialog>
+    </div>
+
+    <div v-show="!(maintenanceMode || sessionExpired)" class="fill-height">
+      <AppBar></AppBar>
+      <v-main class="fill-height">
+        <div id="placeContainer" ref="clickReceiver">
+          <div id="panZoomContainer" ref="panZoomContainer">
+            <panZoom :options="{minZoom: 0.18, maxZoom: 6, initialZoom2: 1, bounds: true, boundsPadding: 0.1}"
+                     style2="background-color: yellow" class="fill-height"
+                     @init="initPanZoom" @transform="panZoomTransform">
+              <Map></Map>
+            </panZoom>
+          </div>
+          <div id="selectedPixelDiv" ref="selectedPixelDiv">
+            <v-img :src="pixelHighlightImage" class="selected-pixel-image"
+                   :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
+          </div>
+          <div v-for="pos in 50" :key="pos" class="selection-highlight">
+            <v-img :src="pixelHighlightImage" class="highlight-image"
+                   :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
+          </div>
+          <div class="d-none">
+            <v-img src="@/assets/pixel-highlight/1.png" ref="highlight1Loader"></v-img>
+            <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
+            <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
+          </div>
+        </div>
+      </v-main>
+      <PlaceFooter></PlaceFooter>
+      <ColorChooserDialog></ColorChooserDialog>
+      <SelectPixelDialog></SelectPixelDialog>
+      <AuthenticationDialog></AuthenticationDialog>
+    </div>
+
   </div>
 </template>
 
@@ -41,6 +63,7 @@ import Map from "@/components/Map";
 import ColorChooserDialog from "@/components/ColorChooserDialog";
 import AuthenticationDialog from "@/components/AuthenticationDialog";
 import SelectPixelDialog from "@/components/SelectPixelDialog";
+import AppBar from "@/components/AppBar";
 
 window.mitt = window.mitt || new mitt();
 
@@ -53,10 +76,12 @@ export default {
       canvasScale: 10,
       selectionHighlights: [],
       pixelHighlightImage: "",
-      pixelHighlightImageScale: 1
+      pixelHighlightImageScale: 1,
+      maintenanceMode: false,
+      sessionExpired: false
     }
   },
-  components: {SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
+  components: {AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
   computed: {
     identity() {
       return this.$store.state.identity;
@@ -70,6 +95,13 @@ export default {
     const colorSound = useSound(colorSoundFile)
     return {
       pixelSound, colorSound
+    }
+  },
+  watch: {
+    maintenanceMode(newValue) {
+      if (!newValue) {
+        location.reload()
+      }
     }
   },
   mounted() {
@@ -210,6 +242,11 @@ export default {
     statusUpdateCallback(data) {
       let pollingTimeout = 1000
       if (data) {
+        this.sessionExpired = data["sessionExpired"]
+        if (this.sessionExpired) {
+          return;
+        }
+
         // handle player auth data
         let identity = data["identity"];
         let authToken = data["authToken"];
@@ -220,6 +257,9 @@ export default {
         this.selectionHighlights = data["highlights"]
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
+
+        this.maintenanceMode = data["maintenanceMode"]
+
         pollingTimeout = data["pollingDelay"]
         this.refreshOverlays()
       } else {
@@ -248,6 +288,9 @@ export default {
         window.mitt.emit("updatePixel", pixel)
         this.colorSound.play();
       }
+    },
+    reloadPage() {
+      location.reload()
     }
   }
 }

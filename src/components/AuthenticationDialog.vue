@@ -141,6 +141,8 @@ export default {
       this.loggingOut = false
       if (this.identity === null) {
         this.requestAuthCode();
+      } else {
+        this.preloadSounds()
       }
     })
   },

@@ -5,7 +5,7 @@
       <div class="d-flex justify-center align-center fill-height">
         <v-sheet rounded elevation="5" class="pa-4">
           <div class="d-flex flex-column align-center">
-            <div v-text="sessionExpired ? 'Your Session has Expired' : 'Web Page is in Maintenance Mode'" class="text-h5 text-center"></div>
+            <div v-text="sessionExpired ? 'Your Session has Expired' : 'our/place is in Maintenance Mode'" class="text-h5 text-center"></div>
             <div v-if="sessionExpired" class="text-body-1 mt-4">Please reload the page.</div>
             <v-btn v-if="sessionExpired" class="mt-4" color="grey darken-3" dark @click="reloadPage">
               <v-icon left>mdi-reload</v-icon>

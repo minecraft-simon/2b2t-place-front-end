@@ -9,7 +9,8 @@ axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL;
 export default new Vuex.Store({
     state: {
         sessionId: null,
-        identity: null
+        identity: null,
+        authToken: null
     },
     mutations: {
         setSessionId(state, sessionId) {
@@ -17,16 +18,38 @@ export default new Vuex.Store({
         },
         setIdentity(state, identity) {
             state.identity = identity
+        },
+        setAuthToken(state, authToken) {
+            state.authToken = authToken
         }
     },
     actions: {
         loadCookies({commit}) {
             let identity = Vue.$cookies.get("2b2t-our-place-identity");
             let authToken = Vue.$cookies.get("2b2t-our-place-token");
-            if (identity !== null && authToken !== null && authToken !== "null") {
+            if (identity !== null && identity !== "null" && authToken !== null && authToken !== "null") {
                 commit("setIdentity", identity)
+                commit("setAuthToken", authToken)
                 axios.defaults.headers.common["Authorization"] = authToken;
             }
+        },
+        saveCookies({commit, state}) {
+            let identity = state.identity
+            let authToken = state.authToken
+            if (identity !== null && authToken !== null) {
+                Vue.$cookies.set("2b2t-our-place-identity", identity, -1);
+                Vue.$cookies.set("2b2t-our-place-token", authToken, -1);
+            }
+        },
+        deleteCookies({commit}) {
+            Vue.$cookies.remove("2b2t-our-place-identity");
+            Vue.$cookies.remove("2b2t-our-place-token");
+        },
+        updateIdentityAndAuthToken({commit}, [identity, authToken]) {
+            commit("setIdentity", identity)
+            commit("setAuthToken", authToken)
+            axios.defaults.headers.common["Authorization"] = authToken;
+
         },
         generateSessionId({commit}) {
             let length = 64;
@@ -36,14 +59,6 @@ export default new Vuex.Store({
                 result += chars[Math.floor(Math.random() * chars.length)];
             }
             commit("setSessionId", result)
-        },
-        updateIdentityAndAuthToken({commit}, [identity, authToken]) {
-            commit("setIdentity", identity)
-            axios.defaults.headers.common["Authorization"] = authToken;
-            if (identity !== null && authToken !== null) {
-                Vue.$cookies.set("2b2t-our-place-identity", identity, -1);
-                Vue.$cookies.set("2b2t-our-place-token", authToken, -1);
-            }
         },
         getRequest({commit}, [endpoint, callback]) {
             axios.get("/" + endpoint)
@@ -64,7 +79,6 @@ export default new Vuex.Store({
                     }
                 })
                 .catch(reason => {
-                    console.log(reason)
                     if (callback) {
                         callback(null);
                     }

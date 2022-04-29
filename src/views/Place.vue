@@ -33,11 +33,11 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div v-for="pos in 50" :key="pos" class="selection-highlight">
+          <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight" :style="highlight">
             <v-img :src="pixelHighlightImage" class="highlight-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div class="d-none">
+          <div style="opacity: 0; pointer-events: none; width: 10px; height: 10px">
             <v-img src="@/assets/pixel-highlight/1.png" ref="highlight1Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
@@ -45,6 +45,7 @@
         </div>
       </v-main>
       <PlaceFooter></PlaceFooter>
+      <HowToUseDialog></HowToUseDialog>
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
@@ -64,6 +65,7 @@ import ColorChooserDialog from "@/components/ColorChooserDialog";
 import AuthenticationDialog from "@/components/AuthenticationDialog";
 import SelectPixelDialog from "@/components/SelectPixelDialog";
 import AppBar from "@/components/AppBar";
+import HowToUseDialog from "@/components/HowToUseDialog";
 
 window.mitt = window.mitt || new mitt();
 
@@ -74,6 +76,7 @@ export default {
       instance: null,
       selectedPixelPos: null,
       canvasScale: 10,
+      selectionHighlightsRaw: [],
       selectionHighlights: [],
       pixelHighlightImage: "",
       pixelHighlightImageScale: 1,
@@ -81,7 +84,7 @@ export default {
       sessionExpired: false
     }
   },
-  components: {AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
+  components: {HowToUseDialog, AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
   computed: {
     identity() {
       return this.$store.state.identity;
@@ -197,26 +200,18 @@ export default {
       selectedPixelDiv.style.display = "block";
     },
     updateSelectionHighlights(baseX, baseY, scale) {
-      // hide all highlights
-      let highlightElements = document.getElementsByClassName("selection-highlight");
-      for (let i = 0; i < highlightElements.length; i++) {
-        let element = highlightElements[i]
-        element.style.display = 'none'
-      }
-
-      // draw max. 50 selection highlights
-      for (let i = 0; i < this.selectionHighlights.length; i++) {
-        let selection = this.selectionHighlights[i]
-        let element = highlightElements[i]
-        if (element) {
-          let x = baseX + selection.x * scale
-          let y = baseY + selection.y * scale
-          element.style.left = x + 'px';
-          element.style.top = y + 'px';
-          element.style.width = scale + 'px';
-          element.style.height = scale + 'px';
-          element.style.display = 'block'
+      this.selectionHighlights = []
+      let length = Math.min(this.selectionHighlightsRaw.length, 50);
+      for (let i = 0; i < length; i++) {
+        let selection = this.selectionHighlightsRaw[i]
+        let highlight = {
+          left: baseX + selection.x * scale+'px',
+          top: baseY + selection.y * scale+'px',
+          width: scale + 'px',
+          height: scale + 'px',
+          identifier: selection.x + "_" + selection.y
         }
+        this.selectionHighlights.push(highlight);
       }
     },
     configPixelHighlightImage(scale) {
@@ -230,7 +225,6 @@ export default {
         this.pixelHighlightImage = this.$refs.highlight3Loader.src
         this.pixelHighlightImageScale = 1.5
       }
-
     },
     sendStatusUpdate() {
       let statusUpdate = {
@@ -254,7 +248,7 @@ export default {
           this.$store.dispatch("updateIdentityAndAuthToken", [identity, authToken])
         }
 
-        this.selectionHighlights = data["highlights"]
+        this.selectionHighlightsRaw = data["highlights"]
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
 
@@ -339,7 +333,6 @@ export default {
 
 .selection-highlight {
   position: absolute;
-  display: none;
   pointer-events: none;
 }
 

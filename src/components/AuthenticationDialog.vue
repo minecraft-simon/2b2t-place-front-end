@@ -9,7 +9,8 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-container class="pt-4 pt-sm-4 pb-8" fluid :style="'max-width: 320px; ' + (contentHidden ? 'opacity: 0' : 'opacity: 1')">
+      <v-container class="pt-4 pt-sm-4 pb-8" fluid
+                   :style="'max-width: 320px; ' + (contentHidden ? 'opacity: 0' : 'opacity: 1')">
         <div v-if="identity === null">
           <div class="text-body-1">
             In order to place pixels you need to link your Minecraft username. No e-mail-address or password required!
@@ -43,7 +44,7 @@
               <span v-text="botName" class="text-highlight"></span>
               using this command:
             </div>
-            <div>/whisper {{ botName + " " + authCode }}</div>
+            <div class="auth-command text-body-1">/whisper {{ botName + " " + authCode }}</div>
 
             <div class="text-body-2 mt-4" style="text-decoration: underline">Step 3:</div>
             <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing pixels!
@@ -63,6 +64,17 @@
             <v-img :src="playerSkinUrl" class="mt-5 player-skin" height="200" contain></v-img>
             <div v-text="identity" class="player-name mt-5"></div>
           </div>
+          <div class="">
+            <v-checkbox color="black" hide-details v-model="rememberInitiallyChecked" @change="checkboxChanged">
+              <template v-slot:label>
+                <div class="black--text text-body-1">Remember this browser</div>
+              </template>
+            </v-checkbox>
+            <div class="grey--text text--darken-2 text-caption mt-1">
+              The feature "Remember this browser" uses cookies to store your session info, so you won't have to
+              authenticate everytime you visit this page.
+            </div>
+          </div>
           <div class="d-flex flex-row mt-10">
             <v-btn outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out</v-btn>
             <v-spacer></v-spacer>
@@ -81,7 +93,7 @@ import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import logOutSoundFile from '@/assets/sounds/log-out.mp3';
 import mitt from "mitt";
 import Vue from "vue";
-import { ref, reactive } from '@vue/composition-api'
+import {ref, reactive} from '@vue/composition-api'
 
 window.mitt = window.mitt || new mitt();
 
@@ -95,7 +107,8 @@ export default {
       pendingAuthExpired: false,
       pendingAuthExpiredTimeout: null,
       loggingOut: true,
-      contentHidden: false
+      contentHidden: false,
+      rememberInitiallyChecked: false
     }
   },
   computed: {
@@ -135,6 +148,9 @@ export default {
     }
   },
   mounted() {
+    if (this.identity !== null) {
+      this.rememberInitiallyChecked = true;
+    }
     window.mitt.on("openAuthenticationDialog", () => {
       this.contentHidden = false
       this.dialogOpen = true
@@ -183,8 +199,7 @@ export default {
       this.pendingAuthExpired = value
     },
     logOut() {
-      Vue.$cookies.remove("2b2t-our-place-identity");
-      Vue.$cookies.remove("2b2t-our-place-token");
+      this.$store.dispatch("deleteCookies")
       this.$store.dispatch("deleteRequest", ["authentication/invalidate-pending-auth/" + this.sessionId, this.logOutCallback])
       this.loggingOut = true
     },
@@ -195,11 +210,16 @@ export default {
       this.logOutSound.play();
       this.$store.dispatch("updateIdentityAndAuthToken", [null, null])
       this.contentHidden = true
+      this.rememberInitiallyChecked = false
       this.dialogOpen = false
       this.loggingOut = false
     },
-    playSoundTest() {
-      this.authSound.play()
+    checkboxChanged(value) {
+      if (value) {
+        this.$store.dispatch("saveCookies")
+      } else {
+        this.$store.dispatch("deleteCookies")
+      }
     }
   }
 }
@@ -210,12 +230,22 @@ export default {
   margin-left: 0;
   margin-right: 0;
 }
+
 .text-highlight {
   font-size: 14pt;
   font-weight: bolder;
 }
+
 .logged-in-text {
   font-size: 14pt;
+}
+
+.auth-command {
+  background-color: #333333;
+  color: white;
+  padding: 2px 0 2px 4px;
+  font-size: 13pt !important;
+  font-family: monospace !important;
 }
 
 .player-name {
@@ -227,8 +257,10 @@ export default {
   /*line-height: 1.2;
   padding: 5px 4px; */
 }
+
 .player-skin {
   /*-webkit-filter: drop-shadow(5px 5px 5px #222);*/
   filter: drop-shadow(2px 2px 4px #222);
 }
+
 </style>

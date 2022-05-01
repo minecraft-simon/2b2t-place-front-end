@@ -1,18 +1,21 @@
 <template>
-  <div  id="placePage" class="fill-height">
+  <div id="placePage" class="fill-height">
 
     <div v-show="maintenanceMode || sessionExpired" class="fill-height">
       <div class="d-flex justify-center align-center fill-height">
         <v-sheet rounded elevation="5" class="pa-4">
           <div class="d-flex flex-column align-center">
-            <div v-text="sessionExpired ? 'Your Session has Expired' : 'our/place is in Maintenance Mode'" class="text-h5 text-center"></div>
+            <div v-text="sessionExpired ? 'Your Session has Expired' : 'our/place is in Maintenance Mode'"
+                 class="text-h5 text-center"></div>
             <div v-if="sessionExpired" class="text-body-1 mt-4">Please reload the page.</div>
             <v-btn v-if="sessionExpired" class="mt-4" color="grey darken-3" dark @click="reloadPage">
               <v-icon left>mdi-reload</v-icon>
               Reload
             </v-btn>
             <div v-if="maintenanceMode" class="text-body-1 mt-4">Please wait.</div>
-            <div v-if="maintenanceMode" class="text-body-1 mt-2 text-center">The web page will automatically refresh as soon as maintenance is over.</div>
+            <div v-if="maintenanceMode" class="text-body-1 mt-2 text-center">
+              The web page will automatically refresh as soon as maintenance is over.
+            </div>
           </div>
         </v-sheet>
       </div>
@@ -33,7 +36,8 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight" :style="highlight">
+          <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight"
+               :style="highlight">
             <v-img :src="pixelHighlightImage" class="highlight-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
@@ -45,7 +49,7 @@
         </div>
       </v-main>
       <PlaceFooter></PlaceFooter>
-      <HowToUseDialog></HowToUseDialog>
+      <HowToUseDialog v-if="!maintenanceMode"></HowToUseDialog>
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
@@ -55,7 +59,7 @@
 </template>
 
 <script>
-import { useSound } from '@vueuse/sound';
+import {useSound} from '@vueuse/sound';
 import pixelSoundFile from '@/assets/sounds/pixel-selected.mp3';
 import colorSoundFile from '@/assets/sounds/color-placed.mp3';
 import mitt from "mitt";
@@ -205,8 +209,8 @@ export default {
       for (let i = 0; i < length; i++) {
         let selection = this.selectionHighlightsRaw[i]
         let highlight = {
-          left: baseX + selection.x * scale+'px',
-          top: baseY + selection.y * scale+'px',
+          left: baseX + selection.x * scale + 'px',
+          top: baseY + selection.y * scale + 'px',
           width: scale + 'px',
           height: scale + 'px',
           identifier: selection.x + "_" + selection.y
@@ -292,10 +296,10 @@ export default {
 
 <style scoped>
 #placePage {
-  background-size: cover;
   background: radial-gradient(ellipse, transparent 30%, rgba(0, 0, 0, 0.6) 100%),
     /*linear-gradient(transparent 60%, rgba(0, 0, 0, 0.75) 95%),*/ linear-gradient(rgba(100, 100, 100, 0.4), rgba(100, 100, 100, 0.4)),
-  url('~@/assets/spawn-render.jpg') right;
+  url('~@/assets/spawn-render.jpg') no-repeat right;
+  background-size: cover;
 }
 
 #placeContainer {

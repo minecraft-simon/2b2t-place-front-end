@@ -10,7 +10,7 @@ module.exports = {
         config
             .plugin('html')
             .tap(args => {
-                args[0].title = "2b2t Place";
+                args[0].title = "2b2t our/place";
                 return args;
             })
     }

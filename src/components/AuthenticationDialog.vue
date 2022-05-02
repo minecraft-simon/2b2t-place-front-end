@@ -18,46 +18,101 @@
 
           <div class="text-h6 text-center mt-2">How to authenticate?</div>
 
-          <div class="text-body-2 mt-2" style="text-decoration: underline">Step 1:</div>
-          <div class="text-body-1">Connect to the Minecraft server <strong>2b2t.org</strong> with Minecraft version
-            1.12.2
-          </div>
-          <v-img src="@/assets/2b2t-domain.png" class="mt-2" contain width="296" height="48"></v-img>
-
-          <div class="text-body-2 mt-4" style="text-decoration: underline">Step 2:</div>
-
-          <div v-if="pendingAuthExpired">
-            <div class="text-body-1">Your auth code has expired. Please request a new one.</div>
-            <v-btn small block outlined class="mt-1" @click="requestAuthCode">Request new auth code</v-btn>
-          </div>
-          <div v-else-if="!(authCode && botName)">
-            <div class="d-flex flex-row align-start justify-center2 mt-1">
-              <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
-              <div class="text-body-1 ml-3">Generating auth code...</div>
+          <div v-if="authenticationServer === null" class="mt-2">
+            <div class="text-body-1">
+              It's simple! Just connect to one of the following Minecraft servers and message one of our bots!
             </div>
+            <div class="d-flex align-center justify-center mt-3">
+              <v-icon color="black" small>mdi-arrow-down</v-icon>
+              <div class="text-body-2 text-center mx-2">
+                Click on your preferred server
+              </div>
+              <v-icon color="black" small>mdi-arrow-down</v-icon>
+            </div>
+
+            <div class="d-flex flex-row pa-1 mt-4 server-element"
+                 style="background-color: black; border: 2px solid #808080"
+                 @click="selectAuthServer('archive')">
+              <v-img src="@/assets/auth-servers/archive-logo.png" max-width="64" height="64" contain></v-img>
+              <div class="d-flex flex-column flex-grow-1 pl-2 pt-1">
+                <v-img src="@/assets/auth-servers/archive-domain.png" max-width="164" max-height="14" contain></v-img>
+                <v-img src="@/assets/auth-servers/Minecraft-via.png" class="mt-2" max-width="180" max-height="14"
+                       contain></v-img>
+                <v-img src="@/assets/auth-servers/No-queue.png" class="mt-1" max-width="90" max-height="16"
+                       contain></v-img>
+              </div>
+            </div>
+
+            <div class="d-flex flex-row pa-1 mt-3 server-element"
+                 style="background-color: black; border: 2px solid #808080"
+                 @click="selectAuthServer('2b2t')">
+              <v-img src="@/assets/auth-servers/2b2t-logo.png" max-width="64" height="64" contain></v-img>
+              <div class="d-flex flex-column flex-grow-1 pl-2 pt-1">
+                <v-img src="@/assets/auth-servers/2b2t-domain.png" max-width="82" max-height="16" contain
+                       style="margin-bottom: -2px"></v-img>
+                <v-img src="@/assets/auth-servers/Minecraft-1-12-2.png" class="mt-2" max-width="156" max-height="14"
+                       contain></v-img>
+                <v-img src="@/assets/auth-servers/Queue.png" class="mt-1" max-width="58" max-height="14"
+                       contain></v-img>
+              </div>
+            </div>
+
+            <div class="grey--text text--darken-3 text-caption mt-2 text-center">
+              Note: all pixels will be placed on 2b2t, no matter which server you choose for authentication
+            </div>
+
           </div>
           <div v-else>
+            <div class="text-body-2 mt-2" style="text-decoration: underline">Step 1:</div>
             <div class="text-body-1">
-              Whisper
-              <span v-text="authCode" class="text-highlight"></span>
-              to the player
-              <span v-text="botName" class="text-highlight"></span>
-              using this command:
+              <span>Connect to the Minecraft server </span>
+              <span v-if="authenticationServer === 'archive'" class="font-weight-medium">thearchive.world</span>
+              <span v-if="authenticationServer === '2b2t'" class="font-weight-medium">2b2t.org</span>
+              <span v-if="authenticationServer === '2b2t'"> with Minecraft version 1.12.2</span>
             </div>
-            <div class="auth-command text-body-1">/whisper {{ botName + " " + authCode }}</div>
+            <v-img v-if="authenticationServer === 'archive'" src="@/assets/auth-servers/archive-address.png"
+                   class="mt-2" contain></v-img>
+            <v-img v-if="authenticationServer === '2b2t'" src="@/assets/auth-servers/2b2t-address.png"
+                   class="mt-2" contain></v-img>
 
-            <div class="text-body-2 mt-4" style="text-decoration: underline">Step 3:</div>
-            <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing pixels!
+            <div class="text-body-2 mt-4" style="text-decoration: underline">Step 2:</div>
+
+            <div v-if="pendingAuthExpired">
+              <div class="text-body-1">Your authentication-code has expired. Please request a new one.</div>
+              <v-btn small block outlined class="mt-1" @click="requestAuthCode">Request new auth code</v-btn>
             </div>
-            <div class="d-flex flex-row align-center justify-center mt-5">
-              <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
-              <div class="text-body-1 ml-3">Waiting for your message...</div>
+            <div v-else-if="!(authCode && botName)">
+              <div class="d-flex flex-row align-start justify-center2 mt-1">
+                <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
+                <div class="text-body-1 ml-3">Generating auth code...</div>
+              </div>
             </div>
-            <div class="d-flex justify-center mt-4">
-              <v-btn outlined @click="closeDialog">Cancel</v-btn>
+            <div v-else>
+              <div class="text-body-1">
+                Whisper
+                <span v-text="authCode" class="text-highlight"></span>
+                to the player
+                <span v-text="botName" class="text-highlight"></span>
+                using this command:
+              </div>
+              <div class="auth-command text-body-1">/whisper {{ botName + " " + authCode }}</div>
+
+              <div class="text-body-2 mt-4" style="text-decoration: underline">Step 3:</div>
+              <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing
+                pixels!
+              </div>
+              <div class="d-flex flex-row align-center justify-center mt-5">
+                <v-progress-circular indeterminate color="grey darken-2" width="2" size="20"></v-progress-circular>
+                <div class="text-body-1 ml-3">Waiting for your message...</div>
+              </div>
+              <div class="d-flex justify-center mt-6">
+                <v-btn outlined @click="closeDialog">Cancel</v-btn>
+              </div>
             </div>
           </div>
+
         </div>
+
         <div v-else>
           <div class="d-flex flex-column align-center mt-2">
             <div class="logged-in-text">You are logged in as:</div>
@@ -102,6 +157,7 @@ export default {
   data() {
     return {
       dialogOpen: false,
+      authenticationServer: null,
       authCode: null,
       botName: null,
       pendingAuthExpired: false,
@@ -153,13 +209,9 @@ export default {
     }
     window.mitt.on("openAuthenticationDialog", () => {
       this.contentHidden = false
+      this.authenticationServer = null
       this.dialogOpen = true
       this.loggingOut = false
-      if (this.identity === null) {
-        this.requestAuthCode();
-      } else {
-        this.preloadSounds()
-      }
     })
   },
   watch: {
@@ -173,11 +225,19 @@ export default {
     closeDialog() {
       this.dialogOpen = false
     },
+    selectAuthServer(server) {
+      this.authenticationServer = server
+      this.requestAuthCode();
+    },
     requestAuthCode() {
       this.authCode = null
       this.botName = null
       this.pendingAuthExpired = false
-      this.$store.dispatch("postRequest", ["authentication/request-auth-code/" + this.sessionId, null, this.requestAuthCodeCallback])
+      let payload = {
+        sessionId: this.sessionId,
+        authServer: this.authenticationServer
+      }
+      this.$store.dispatch("postRequest", ["authentication/request-auth-code", payload, this.requestAuthCodeCallback])
       this.preloadSounds()
     },
     requestAuthCodeCallback(data) {
@@ -226,9 +286,13 @@ export default {
 </script>
 
 <style scoped>
-.full-width-dialog {
-  margin-left: 0;
-  margin-right: 0;
+.server-element {
+  cursor: pointer;
+  filter: drop-shadow(1px 1px 2px #222);
+}
+
+.server-element:hover {
+  filter: drop-shadow(2px 2px 4px #222);
 }
 
 .text-highlight {

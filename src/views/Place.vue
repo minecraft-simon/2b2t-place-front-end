@@ -136,17 +136,12 @@ export default {
       window.mitt.on("pixelSelected", pos => {
         this.selectedPixelPos = pos
 
-        // reset the highlight animation
-        let selectedPixelDiv = this.$refs.selectedPixelDiv;
-        selectedPixelDiv.style.animation = 'none';
-        selectedPixelDiv.offsetHeight;
-        selectedPixelDiv.style.animation = null;
-        // enable the highlight transition
-        selectedPixelDiv.style.transition = 'all 0.1s ease-out';
+        this.resetHighlightAnimation()
+
         //play the pop sound
         this.pixelSound.stop()
         this.pixelSound.play()
-        this.refreshOverlays();
+        this.refreshOverlays()
       })
       window.mitt.on("colorClicked", color => {
         this.colorClicked(color)
@@ -188,6 +183,14 @@ export default {
         this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
       }
+    },
+    resetHighlightAnimation() {
+      let selectedPixelDiv = this.$refs.selectedPixelDiv;
+      selectedPixelDiv.style.animation = 'none';
+      selectedPixelDiv.offsetHeight;
+      selectedPixelDiv.style.animation = null;
+      // enable the highlight transition
+      selectedPixelDiv.style.transition = 'all 0.1s ease-out';
     },
     updateSelectedPixelHighlight(baseX, baseY, scale) {
       let selectedPixelDiv = this.$refs.selectedPixelDiv;
@@ -342,15 +345,16 @@ export default {
 
 @keyframes breathe {
   0% {
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
   50% {
-    transform: scale(1.0);
+    transform: scale(1.1);
   }
   100% {
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
 }
+
 </style>
 
 <style>

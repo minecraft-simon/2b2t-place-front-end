@@ -95,7 +95,7 @@
                 <span v-text="botName" class="text-highlight"></span>
                 using this command:
               </div>
-              <div class="auth-command text-body-1">/whisper {{ botName + " " + authCode }}</div>
+              <div class="auth-command text-body-1 mt-1">/whisper {{ botName + " " + authCode }}</div>
 
               <div class="text-body-2 mt-4" style="text-decoration: underline">Step 3:</div>
               <div class="text-body-1">That's it! As soon as our bot receives your message, you can start placing
@@ -106,7 +106,7 @@
                 <div class="text-body-1 ml-3">Waiting for your message...</div>
               </div>
               <div class="d-flex justify-center mt-6">
-                <v-btn outlined @click="closeDialog">Cancel</v-btn>
+                <v-btn small outlined @click="closeDialog">Cancel</v-btn>
               </div>
             </div>
           </div>
@@ -130,10 +130,10 @@
               authenticate everytime you visit this page.
             </div>
           </div>
-          <div class="d-flex flex-row mt-10">
-            <v-btn outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out</v-btn>
+          <div class="d-flex flex-row mt-8">
+            <v-btn small outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="grey darken-3" dark @click="dialogOpen = false">Continue</v-btn>
+            <v-btn small color="grey darken-3" dark @click="dialogOpen = false">Continue</v-btn>
           </div>
         </div>
 
@@ -243,7 +243,7 @@ export default {
     requestAuthCodeCallback(data) {
       if (data) {
         this.authCode = data["authCode"];
-        this.botName = "minecraft_simon";
+        this.botName = data["botName"];
         let expirySeconds = data["expirySeconds"];
         // start timeout to show expiry of auth code
         let pendingAuthExpiredFunc = this.setPendingAuthExpired

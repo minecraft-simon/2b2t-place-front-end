@@ -12,47 +12,53 @@
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn fab small>
+          <v-btn fab small @click="externalTargetClicked('mapart')">
             <v-icon>mdi-download</v-icon>
           </v-btn>
         </template>
-        <span class="text-body-1 black--text">Mapart Download</span>
+        <div class="text-body-1 black--text" data-target="mapart">Mapart Download</div>
       </v-tooltip>
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn fab dark small color="#FF4500">
-            <v-icon>mdi-reddit</v-icon>
+          <v-btn fab small @click="externalTargetClicked('reddit')">
+            <v-icon color="#FF4500">mdi-reddit</v-icon>
           </v-btn>
         </template>
-        <span class="text-body-1 black--text">Visit our Subreddit</span>
+        <div class="text-body-1 black--text text-center" data-target="reddit"
+             style="width: 154.86px; letter-spacing: 0.03em !important;">
+          Visit our Subreddit
+        </div>
       </v-tooltip>
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn fab dark small color="#7289da">
-            <v-icon>mdi-discord</v-icon>
+          <v-btn fab small @click="externalTargetClicked('discord')">
+            <v-icon color="#7289da">mdi-discord</v-icon>
           </v-btn>
         </template>
-        <span class="text-body-1 black--text">Contact us on Discord</span>
+        <div class="text-body-1 black--text" data-target="discord">Join our Discord server</div>
       </v-tooltip>
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn dark fab small>
+          <v-btn fab small @click="externalTargetClicked('github')">
             <v-icon>mdi-github</v-icon>
           </v-btn>
         </template>
-        <span class="text-body-1 black--text">View our code on GitHub</span>
+        <div class="text-body-1 black--text text-center" data-target="github"
+             style="width: 193.85px">
+          View our code on GitHub
+        </div>
       </v-tooltip>
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn fab dark small color="#9146FF">
-            <v-icon>mdi-twitch</v-icon>
+          <v-btn fab small @click="externalTargetClicked('twitch')">
+            <v-icon color="#9146FF">mdi-twitch</v-icon>
           </v-btn>
         </template>
-        <span class="text-body-1 black--text">Spectate the bots on Twitch</span>
+        <div class="text-body-1 black--text" data-target="twitch">Spectate the bots on Twitch</div>
       </v-tooltip>
 
     </v-speed-dial>
@@ -84,16 +90,38 @@ export default {
   methods: {
     showTooltips() {
       this.showTooltip = true
+      process.nextTick(() => {
+        this.initToolTipClickListeners()
+      })
+    },
+    initToolTipClickListeners() {
+      const tooltipElements = document.querySelectorAll('.v-tooltip__content')
+      tooltipElements.forEach(el => el.addEventListener('click', () => {
+        let div = el.querySelector('div')
+        let target = div.dataset.target
+        this.externalTargetClicked(target)
+      }));
+    },
+    externalTargetClicked(target) {
+      let url = null
+      switch (target) {
+        case 'twitch': url = "https://www.twitch.tv/rules_off"; break
+        case 'github': url = "https://github.com/minecraft-simon"; break
+        case 'discord': url = "https://www.google.com/"; break
+        case 'reddit': url = "https://www.google.com/"; break
+      }
+      if (url) {
+        window.open(url, '_blank').focus();
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-
 .v-tooltip__content {
   pointer-events: initial !important;
   cursor: pointer;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
 }
-
 </style>

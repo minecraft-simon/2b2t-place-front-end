@@ -292,7 +292,7 @@ export default {
 }
 
 .server-element:hover {
-  filter: drop-shadow(2px 2px 4px #222);
+  filter: contrast(0.9) brightness(1.2) drop-shadow(2px 2px 4px #222);
 }
 
 .text-highlight {

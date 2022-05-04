@@ -66,6 +66,10 @@
 </template>
 
 <script>
+import mitt from "mitt";
+
+window.mitt = window.mitt || new mitt();
+
 export default {
   name: "FloatingActionButton",
   data() {
@@ -103,12 +107,26 @@ export default {
       }));
     },
     externalTargetClicked(target) {
+      if (target === 'mapart') {
+        window.mitt.emit("downloadMapArt")
+        //console.log("emit")
+        return
+      }
+
       let url = null
       switch (target) {
-        case 'twitch': url = "https://www.twitch.tv/rules_off"; break
-        case 'github': url = "https://github.com/minecraft-simon"; break
-        case 'discord': url = "https://www.google.com/"; break
-        case 'reddit': url = "https://www.google.com/"; break
+        case 'twitch':
+          url = "https://www.twitch.tv/rules_off";
+          break
+        case 'github':
+          url = "https://github.com/minecraft-simon";
+          break
+        case 'discord':
+          url = "https://discord.gg/AtkWp8DBtm";
+          break
+        case 'reddit':
+          url = "https://www.google.com/";
+          break
       }
       if (url) {
         window.open(url, '_blank').focus();

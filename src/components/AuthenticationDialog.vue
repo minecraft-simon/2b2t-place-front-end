@@ -250,7 +250,7 @@ export default {
         clearTimeout(this.pendingAuthExpiredTimeout)
         this.pendingAuthExpiredTimeout = setTimeout(function () {
           pendingAuthExpiredFunc(true)
-        }, expirySeconds * 1000);
+        }, (expirySeconds - 3) * 1000);
       } else {
         // TODO
       }

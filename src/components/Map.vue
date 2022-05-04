@@ -1,5 +1,5 @@
 <template>
-  <div :style="divStyle" id="canvasContainer" ref="canvasContainer" class="interpolation-nn">
+  <div :style="divStyle" id="canvasContainer" ref="canvasContainer" class="interpolation-nn noselect">
     <img src="@/assets/map-background.png" id="mapBackground" ref="mapBackground" class="interpolation-nn">
     <canvas id="myCanvas" ref="myCanvas" :width="cols * cellSize" :height="rows * cellSize"
             class="interpolation-nn"></canvas>
@@ -102,7 +102,10 @@ export default {
           counter++;
         }
       }
+    })
 
+    window.mitt.on("downloadMapArt", () => {
+      this.downloadMapArt()
     })
 
     this.setBackgroundScale()
@@ -116,6 +119,14 @@ export default {
       let s = this.cellSize
       ctx.fillStyle = this.colors[color]
       ctx.fillRect(x * s, y * s, s, s)
+    },
+    downloadMapArt() {
+      let canvas = document.getElementById("myCanvas")
+      let image = canvas.toDataURL()
+      let downloadLink = document.createElement('a')
+      downloadLink.download = 'our_place_mapart.png'
+      downloadLink.href = image
+      downloadLink.click()
     }
   }
 }
@@ -144,6 +155,14 @@ export default {
 <style>
 .vue-pan-zoom-scene {
   height: 100%;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 </style>

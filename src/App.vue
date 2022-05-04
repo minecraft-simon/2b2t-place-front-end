@@ -30,12 +30,11 @@ body {
 }
 
 .interpolation-nn {
-  /* IE, only works on <img> tags */
-  /*-ms-interpolation-mode: nearest-neighbor;*/
-  /* Firefox */
-  /*image-rendering: crisp-edges;*/
-  /* Chromium + Safari */
   image-rendering: pixelated;
+}
+
+.vue-pan-zoom-scene {
+  outline: none;
 }
 
 

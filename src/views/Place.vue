@@ -70,6 +70,8 @@ import AuthenticationDialog from "@/components/AuthenticationDialog";
 import SelectPixelDialog from "@/components/SelectPixelDialog";
 import AppBar from "@/components/AppBar";
 import HowToUseDialog from "@/components/HowToUseDialog";
+import {ref} from "@vue/composition-api";
+import authSoundFile from "@/assets/sounds/auth-success.mp3";
 
 window.mitt = window.mitt || new mitt();
 
@@ -98,10 +100,24 @@ export default {
     }
   },
   setup() {
-    const pixelSound = useSound(pixelSoundFile)
-    const colorSound = useSound(colorSoundFile)
+    const playbackRate = ref(1)
+    const pixelSound = useSound(pixelSoundFile, {playbackRate})
+    const colorSound = useSound(colorSoundFile, {playbackRate})
+
+    const playPixelSound = () => {
+      //playbackRate.value = Math.random() / 5 + 0.9
+      playbackRate.value = 1
+      pixelSound.stop()
+      pixelSound.play()
+    }
+
+    const playColorSound = () => {
+      playbackRate.value = Math.random() / 2 + 0.75
+      colorSound.play()
+    }
+
     return {
-      pixelSound, colorSound
+      pixelSound, colorSound, playPixelSound, playColorSound
     }
   },
   watch: {
@@ -139,8 +155,7 @@ export default {
         this.resetHighlightAnimation()
 
         //play the pop sound
-        this.pixelSound.stop()
-        this.pixelSound.play()
+        this.playPixelSound()
         this.refreshOverlays()
       })
       window.mitt.on("colorClicked", color => {
@@ -287,7 +302,7 @@ export default {
     sendPixelCallback(pixel) {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
-        this.colorSound.play();
+        this.playColorSound();
       }
     },
     reloadPage() {

@@ -48,12 +48,14 @@
           </div>
         </div>
       </v-main>
-      <PlaceFooter></PlaceFooter>
+      <PlaceFooter ref="placeFooter"></PlaceFooter>
       <HowToUseDialog v-if="!maintenanceMode"></HowToUseDialog>
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
     </div>
+
+    <FloatingActionButton ref="floatingActionButton" style="position: absolute"></FloatingActionButton>
 
   </div>
 </template>
@@ -72,6 +74,7 @@ import AppBar from "@/components/AppBar";
 import HowToUseDialog from "@/components/HowToUseDialog";
 import {ref} from "@vue/composition-api";
 import authSoundFile from "@/assets/sounds/auth-success.mp3";
+import FloatingActionButton from "@/components/FloatingActionButton";
 
 window.mitt = window.mitt || new mitt();
 
@@ -90,7 +93,10 @@ export default {
       sessionExpired: false
     }
   },
-  components: {HowToUseDialog, AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter},
+  components: {
+    FloatingActionButton,
+    HowToUseDialog, AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter
+  },
   computed: {
     identity() {
       return this.$store.state.identity;
@@ -126,6 +132,11 @@ export default {
         location.reload()
       }
     }
+  },
+  created() {
+    let method = this.repositionFloatingActionButton
+    window.addEventListener("resize", method);
+    setTimeout(method, 300);
   },
   mounted() {
     this.$store.dispatch("generateSessionId")
@@ -307,6 +318,15 @@ export default {
     },
     reloadPage() {
       location.reload()
+    },
+    repositionFloatingActionButton() {
+      let footerBB = this.$refs.placeFooter.$el.getBoundingClientRect()
+      let fab = this.$refs.floatingActionButton.$el
+      let fabBB = fab.getBoundingClientRect()
+      let fabStyle = fab["style"]
+      let padding = 8 + Math.min(Math.max((footerBB.width - 320) * 0.015, 0), 8)
+      fabStyle.top = footerBB.y - fabBB.height - padding + 'px'
+      fabStyle.right = padding + 'px'
     }
   }
 }
@@ -318,6 +338,7 @@ export default {
     /*linear-gradient(transparent 60%, rgba(0, 0, 0, 0.75) 95%),*/ linear-gradient(rgba(100, 100, 100, 0.4), rgba(100, 100, 100, 0.4)),
   url('~@/assets/spawn-render.jpg') no-repeat right;
   background-size: cover;
+  position: relative;
 }
 
 #placeContainer {
@@ -330,7 +351,7 @@ export default {
   left: 0;
   top: 0;
   right: 0;
-  height: calc(100% - 100px);
+  height: calc(100% - 0px);
 }
 
 #selectedPixelDiv {

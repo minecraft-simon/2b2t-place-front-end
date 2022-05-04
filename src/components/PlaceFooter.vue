@@ -1,7 +1,10 @@
 <template>
-  <v-footer app fixed padless style="background-color: transparent !important;">
+  <v-footer app fixed padless style="background-color: transparent !important; pointer-events: none">
     <div class="footer-container d-flex flex-column">
-      <div class="d-flex justify-end pa-2 pa-sm-3 pa-md-4">
+      <div v-if="false" class="d-flex justify-space-between align-end pa-2 pa-sm-3 pa-md-4">
+        <v-progress-circular size="50" value="10" rotate="270" class="circular-countdown">
+          <div class="text-h6" style="transform: scaleX(-1)">50</div>
+        </v-progress-circular>
         <FloatingActionButton></FloatingActionButton>
       </div>
       <div class="button-main-container d-flex">
@@ -113,6 +116,15 @@ export default {
 
 .color-mini-thumbnail {
   filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.8));
+}
+
+.circular-countdown {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  transform: scaleX(-1);
 }
 
 </style>

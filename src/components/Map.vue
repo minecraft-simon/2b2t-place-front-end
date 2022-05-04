@@ -150,19 +150,19 @@ export default {
   left: 0;
 }
 
-</style>
-
-<style>
-.vue-pan-zoom-scene {
-  height: 100%;
-}
-
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Old versions of Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+</style>
+
+<style>
+.vue-pan-zoom-scene {
+  height: 100%;
 }
 
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div style="pointer-events: initial">
     <v-overlay :value="speedDialOpened" z-index="1"></v-overlay>
 
-    <v-speed-dial v-model="speedDialOpened" transition="slide-y-reverse-transition">
+    <v-speed-dial v-model="speedDialOpened" transition="slide-y-reverse-transition" style="z-index: 5">
       <template v-slot:activator>
         <v-btn fab :small2="$vuetify.breakpoint.xs">
           <v-icon v-if="speedDialOpened">mdi-close</v-icon>
@@ -82,7 +82,7 @@ export default {
     speedDialOpened(newValue) {
       if (newValue) {
         let showTooltipsMethod = this.showTooltips
-        setTimeout(showTooltipsMethod, 300)
+        setTimeout(showTooltipsMethod, 400)
       } else {
         this.showTooltip = false
       }

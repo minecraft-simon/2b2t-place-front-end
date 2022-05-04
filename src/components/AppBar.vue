@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     playerHeadClicked() {
-      window.mitt.emit("openAuthenticationDialog", null)
+      window.mitt.emit("openAuthenticationDialog")
     }
   }
 }

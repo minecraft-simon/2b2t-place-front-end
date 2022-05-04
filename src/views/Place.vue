@@ -293,7 +293,7 @@ export default {
         if (this.identity !== null) {
           this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
         } else {
-          window.mitt.emit("openAuthenticationDialog")
+          window.mitt.emit("openAuthenticationDialog", true)
         }
       } else {
         window.mitt.emit("openSelectPixelDialog")

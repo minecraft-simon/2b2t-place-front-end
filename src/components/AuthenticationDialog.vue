@@ -160,9 +160,10 @@
 
 <script>
 import {useSound} from '@vueuse/sound';
-import menuOpenFile from '@/assets/sounds/menu-open.mp3';
+import noAuthSoundFile from '@/assets/sounds/no-auth.mp3';
 import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import logOutSoundFile from '@/assets/sounds/log-out.mp3';
+import menuCloseSoundFile from '@/assets/sounds/menu-close.mp3';
 import mitt from "mitt";
 import Vue from "vue";
 import {ref, reactive} from '@vue/composition-api'
@@ -200,9 +201,10 @@ export default {
   },
   setup() {
     const volume = ref(1)
-    const menuOpenSound = useSound(menuOpenFile)
+    const noAuthSound = useSound(noAuthSoundFile)
     const authSound = useSound(authSoundFile, {volume})
     const logOutSound = useSound(logOutSoundFile, {volume})
+    const menuCloseSound = useSound(menuCloseSoundFile)
 
     const preloadSounds = () => {
       volume.value = 0.01
@@ -218,25 +220,32 @@ export default {
     }
 
     return {
-      menuOpenSound, authSound, logOutSound, preloadSounds
+      noAuthSound, authSound, logOutSound, menuCloseSound, preloadSounds
     }
   },
   mounted() {
     if (this.identity !== null) {
       this.rememberInitiallyChecked = true;
     }
-    window.mitt.on("openAuthenticationDialog", () => {
+    window.mitt.on("openAuthenticationDialog", openedWhenPlacing => {
       this.contentHidden = false
       this.authenticationServer = null
       this.dialogOpen = true
       this.loggingOut = false
-      this.menuOpenSound.play();
+      if (openedWhenPlacing) {
+        this.noAuthSound.play();
+      }
     })
   },
   watch: {
     identity(value) {
       if (value != null) {
         this.authSound.play();
+      }
+    },
+    dialogOpen(value) {
+      if (!value) {
+        //this.menuCloseSound.play();
       }
     }
   },

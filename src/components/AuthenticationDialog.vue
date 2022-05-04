@@ -109,6 +109,21 @@
                 <v-btn small outlined @click="closeDialog">Cancel</v-btn>
               </div>
             </div>
+
+            <!-- begin: having trouble? discord! -->
+            <div class="text-center grey--text text--darken-2 mt-5">Having trouble authenticating?</div>
+            <div class="d-flex justify-center">
+              <a href="https://discord.gg/AtkWp8DBtm" target="_blank" class="grey--text text--darken-3">
+                <div class="d-flex align-baseline">
+                  <div>
+                    <v-icon small color="#7289da" class="mr-1">mdi-discord</v-icon>
+                  </div>
+                  <div>Contact us on Discord!</div>
+                </div>
+              </a>
+            </div>
+            <!-- end: having trouble? discord! -->
+
           </div>
 
         </div>
@@ -131,7 +146,8 @@
             </div>
           </div>
           <div class="d-flex flex-row mt-8">
-            <v-btn small outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out</v-btn>
+            <v-btn small outlined class="mr-2" color="red darken-3" :loading="loggingOut" @click="logOut">Log out
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn small color="grey darken-3" dark @click="dialogOpen = false">Continue</v-btn>
           </div>
@@ -144,6 +160,7 @@
 
 <script>
 import {useSound} from '@vueuse/sound';
+import menuOpenFile from '@/assets/sounds/menu-open.mp3';
 import authSoundFile from '@/assets/sounds/auth-success.mp3';
 import logOutSoundFile from '@/assets/sounds/log-out.mp3';
 import mitt from "mitt";
@@ -183,6 +200,7 @@ export default {
   },
   setup() {
     const volume = ref(1)
+    const menuOpenSound = useSound(menuOpenFile)
     const authSound = useSound(authSoundFile, {volume})
     const logOutSound = useSound(logOutSoundFile, {volume})
 
@@ -200,7 +218,7 @@ export default {
     }
 
     return {
-      authSound, logOutSound, preloadSounds
+      menuOpenSound, authSound, logOutSound, preloadSounds
     }
   },
   mounted() {
@@ -212,6 +230,7 @@ export default {
       this.authenticationServer = null
       this.dialogOpen = true
       this.loggingOut = false
+      this.menuOpenSound.play();
     })
   },
   watch: {

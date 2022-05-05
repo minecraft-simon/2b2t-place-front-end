@@ -1,5 +1,5 @@
 <template>
-  <v-footer app fixed padless style="background-color: transparent !important; pointer-events: none">
+  <v-footer app fixed padless style="background-color: transparent !important;">
     <div class="footer-container d-flex flex-column">
       <div v-if="false" class="d-flex justify-space-between align-end pa-2 pa-sm-3 pa-md-4">
         <v-progress-circular size="50" value="10" rotate="270" class="circular-countdown">
@@ -12,7 +12,7 @@
         <div
             class="button-container d-flex d-lg-none flex-row flex-lg-wrap align-center px-3 flex-grow-0"
             style="height: 80px; overflow: auto; margin: auto;">
-          <v-btn tile depressed color="black" class="grey lighten-1" style="height: 50px"
+          <v-btn depressed color="black" class="grey lighten-2" style="height: 50px"
                  @click="requestOpenColorDialog">
             <v-icon left>mdi-dots-vertical</v-icon>
             Colors
@@ -32,7 +32,7 @@
             class="button-container d-none d-lg-flex flex-row flex-lg-wrap justify-lg-center pl-4 pr-2 pb-2 pt-4 pb-lg-0 pt-lg-2"
             style="max-width: 1140px; overflow: auto; margin: auto;">
           <div v-for="colorId in colorOrder" :key="colorId" class="mr-4 mb-4 mr-lg-2 mb-lg-2">
-            <v-btn tile color="black" class="grey lighten-2 px-3 px-md-3"
+            <v-btn color="black" class="grey lighten-2 px-3 px-md-3"
                    :style="'height: ' + 45 + 'px'"
                    @click="colorClicked(colorId)">
               <v-img :src="getColorThumbnail(colorId)" class="mr-3 mr-lg-2" :width="32" :height="32"
@@ -50,12 +50,13 @@
 <script>
 import mitt from "mitt";
 import FloatingActionButton from "@/components/FloatingActionButton";
+import CooldownBar from "@/components/CooldownBar";
 
 window.mitt = window.mitt || new mitt();
 
 export default {
   name: "PlaceFooter",
-  components: {FloatingActionButton},
+  components: {CooldownBar, FloatingActionButton},
   data() {
     return {
       colorNames: [

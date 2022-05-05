@@ -1,10 +1,10 @@
 <template>
   <div style="pointer-events: initial">
-    <v-overlay :value="speedDialOpened" z-index="1"></v-overlay>
+    <v-overlay :value="speedDialOpened" z-index="10"></v-overlay>
 
-    <v-speed-dial v-model="speedDialOpened" transition="slide-y-reverse-transition" style="z-index: 5">
+    <v-speed-dial v-model="speedDialOpened" transition="slide-y-reverse-transition" style="z-index: 11">
       <template v-slot:activator>
-        <v-btn fab :small2="$vuetify.breakpoint.xs">
+        <v-btn fab style="z-index: 11">
           <v-icon v-if="speedDialOpened">mdi-close</v-icon>
           <v-icon v-else>mdi-open-in-new</v-icon>
         </v-btn>
@@ -26,7 +26,7 @@
           </v-btn>
         </template>
         <div class="text-body-1 black--text text-center" data-target="reddit"
-             style="width: 154.86px; letter-spacing: 0.03em !important;">
+             style="width: 154.86px; letter-spacing: 0.04em !important;">
           Visit our Subreddit
         </div>
       </v-tooltip>

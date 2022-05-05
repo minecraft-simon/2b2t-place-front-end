@@ -55,6 +55,7 @@
       <AuthenticationDialog></AuthenticationDialog>
     </div>
 
+    <CooldownBar ref="cooldownBar" style="position: absolute; left: 0; right: 0"></CooldownBar>
     <FloatingActionButton ref="floatingActionButton" style="position: absolute"></FloatingActionButton>
 
   </div>
@@ -75,6 +76,7 @@ import HowToUseDialog from "@/components/HowToUseDialog";
 import {ref} from "@vue/composition-api";
 import authSoundFile from "@/assets/sounds/auth-success.mp3";
 import FloatingActionButton from "@/components/FloatingActionButton";
+import CooldownBar from "@/components/CooldownBar";
 
 window.mitt = window.mitt || new mitt();
 
@@ -94,6 +96,7 @@ export default {
     }
   },
   components: {
+    CooldownBar,
     FloatingActionButton,
     HowToUseDialog, AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter
   },
@@ -134,15 +137,16 @@ export default {
     }
   },
   created() {
-    let method = this.repositionFloatingActionButton
-    window.addEventListener("resize", method);
-    setTimeout(method, 300);
+
   },
   mounted() {
     this.$store.dispatch("generateSessionId")
     this.initEventListeners();
     this.initMittListeners();
     this.sendStatusUpdate();
+
+    window.addEventListener("resize", this.triggerReposition)
+    this.triggerReposition()
   },
   methods: {
     initEventListeners() {
@@ -319,14 +323,25 @@ export default {
     reloadPage() {
       location.reload()
     },
-    repositionFloatingActionButton() {
+    triggerReposition() {
+      let method = this.repositionFloatingElements
+      setTimeout(method, 1000)
+      method()
+    },
+    repositionFloatingElements() {
       let footerBB = this.$refs.placeFooter.$el.getBoundingClientRect()
+
       let fab = this.$refs.floatingActionButton.$el
       let fabBB = fab.getBoundingClientRect()
       let fabStyle = fab["style"]
-      let padding = 8 + Math.min(Math.max((footerBB.width - 320) * 0.015, 0), 8)
+      let padding = 8 + Math.min(Math.max((footerBB.width - 320) * 0.01, 0), 16)
       fabStyle.top = footerBB.y - fabBB.height - padding + 'px'
       fabStyle.right = padding + 'px'
+
+      let cooldownBar = this.$refs.cooldownBar.$el
+      let cbBB = cooldownBar.getBoundingClientRect()
+      let cbStyle = cooldownBar["style"]
+      cbStyle.top = footerBB.y - cbBB.height + 'px'
     }
   }
 }

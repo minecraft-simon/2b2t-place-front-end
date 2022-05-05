@@ -33,7 +33,7 @@ window.mitt = window.mitt || new mitt();
 export default {
   name: "AppBar",
   data: () => ({
-    hideSizeHelper: true
+    hideSizeHelper: false
   }),
   computed: {
     helpersHidden: function () {

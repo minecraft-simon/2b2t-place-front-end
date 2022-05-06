@@ -288,7 +288,7 @@ export default {
         this.selectionHighlightsRaw = data["highlights"]
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
-
+        window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
         this.maintenanceMode = data["maintenanceMode"]
 
         pollingTimeout = data["pollingDelay"]
@@ -317,6 +317,7 @@ export default {
     sendPixelCallback(pixel) {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
+        window.mitt.emit("setCooldown", [pixel["cooldownSeconds"], pixel["cooldownSeconds"]])
         this.playColorSound();
       }
     },

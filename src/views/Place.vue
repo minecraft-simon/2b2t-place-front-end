@@ -65,6 +65,7 @@
 import {useSound} from '@vueuse/sound';
 import pixelSoundFile from '@/assets/sounds/pixel-selected.mp3';
 import colorSoundFile from '@/assets/sounds/color-placed.mp3';
+import placeCooldownSoundFile from '@/assets/sounds/place-cooldown.mp3';
 import mitt from "mitt";
 import PlaceFooter from "@/components/PlaceFooter";
 import Map from "@/components/Map";
@@ -74,7 +75,6 @@ import SelectPixelDialog from "@/components/SelectPixelDialog";
 import AppBar from "@/components/AppBar";
 import HowToUseDialog from "@/components/HowToUseDialog";
 import {ref} from "@vue/composition-api";
-import authSoundFile from "@/assets/sounds/auth-success.mp3";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import CooldownBar from "@/components/CooldownBar";
 
@@ -110,8 +110,9 @@ export default {
   },
   setup() {
     const playbackRate = ref(1)
-    const pixelSound = useSound(pixelSoundFile, {playbackRate})
+    const pixelSound = useSound(pixelSoundFile)
     const colorSound = useSound(colorSoundFile, {playbackRate})
+    const placeCooldownSound = useSound(placeCooldownSoundFile)
 
     const playPixelSound = () => {
       //playbackRate.value = Math.random() / 5 + 0.9
@@ -126,7 +127,7 @@ export default {
     }
 
     return {
-      pixelSound, colorSound, playPixelSound, playColorSound
+      pixelSound, colorSound, placeCooldownSound, playPixelSound, playColorSound
     }
   },
   watch: {
@@ -289,6 +290,7 @@ export default {
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
+        this.$store.state.cooldownSecondsLeft = data["cooldownSecondsLeft"]
         this.maintenanceMode = data["maintenanceMode"]
 
         pollingTimeout = data["pollingDelay"]
@@ -306,7 +308,11 @@ export default {
           color: color
         }
         if (this.identity !== null) {
-          this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
+          if (this.$store.state.cooldownSecondsLeft === 0) {
+            this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
+          } else {
+            this.placeCooldownSound.play();
+          }
         } else {
           window.mitt.emit("openAuthenticationDialog", true)
         }
@@ -318,7 +324,10 @@ export default {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
         window.mitt.emit("setCooldown", [pixel["cooldownSeconds"], pixel["cooldownSeconds"]])
+        this.$store.state.cooldownSecondsLeft = pixel["cooldownSeconds"]
         this.playColorSound();
+      } else {
+        this.placeCooldownSound.play();
       }
     },
     reloadPage() {

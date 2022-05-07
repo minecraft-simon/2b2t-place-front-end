@@ -3,11 +3,13 @@
   <v-sheet rounded elevation="4" class="ma-2 mb-md-3 mb-lg-4 mb-xl-5 align-self-start align-self-sm-auto" style="display: inline-block">
     <div class="mx-5 my-2 text-body-1 text-lg-h6 font-weight-regular">Cooldown: {{ cooldownSecondsLeft }}s</div>
   </v-sheet>
-  <v-progress-linear :value="progressBarValue" :height="12" color="#b5291f"></v-progress-linear>
+  <v-progress-linear :value="progressBarValue" :height="progressBarHeight" :color="progressBarColor"></v-progress-linear>
 </div>
 </template>
 
 <script>
+import {useSound} from '@vueuse/sound';
+import cooldownOverSoundFile from '@/assets/sounds/cooldown-over.mp3';
 import mitt from "mitt";
 window.mitt = window.mitt || new mitt();
 
@@ -38,12 +40,27 @@ export default {
         return 9;
       }
       return 8;
+    },
+    progressBarColor() {
+      /*
+      #a22500, #b8b900, #098e00
+      let val = this.progressBarValue
+
+      let red = 0
+      if (val <= ) */
+
+      return "#b5291f"
+    }
+  },
+  setup() {
+    const cooldownOverSound = useSound(cooldownOverSoundFile)
+    return {
+      cooldownOverSound
     }
   },
   mounted() {
     window.mitt.on("setCooldown", cooldownData => {
       this.updateCooldownBarData(cooldownData)
-      //this.recalculateCooldownState()
     })
     setInterval(this.recalculateCooldownState, 100);
   },
@@ -84,7 +101,8 @@ export default {
         this.showCooldownBar = true
       } else if (this.showCooldownBar) {
         this.showCooldownBar = false
-        setTimeout(this.resetProgressBarValue, 500);
+        setTimeout(this.resetProgressBarValue, 500)
+        this.cooldownOverSound.play()
       }
     },
     resetProgressBarValue() {

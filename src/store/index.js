@@ -10,7 +10,8 @@ export default new Vuex.Store({
     state: {
         sessionId: null,
         identity: null,
-        authToken: null
+        authToken: null,
+        cooldownSecondsLeft: 0
     },
     mutations: {
         setSessionId(state, sessionId) {

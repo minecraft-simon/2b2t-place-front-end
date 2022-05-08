@@ -25,7 +25,7 @@
             <div class="d-flex align-center justify-center mt-3">
               <v-icon color="black" small>mdi-arrow-down</v-icon>
               <div class="text-body-2 text-center mx-2">
-                Click on your preferred server
+                Select a server to continue
               </div>
               <v-icon color="black" small>mdi-arrow-down</v-icon>
             </div>

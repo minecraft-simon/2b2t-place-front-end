@@ -48,6 +48,9 @@
             <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
           </div>
+          <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition" :style="value">
+            <v-img src="@/assets/map-markers/on-map.png" class="interpolation-nn"></v-img>
+          </div>
         </div>
       </v-main>
       <PlaceFooter ref="placeFooter"></PlaceFooter>
@@ -93,6 +96,8 @@ export default {
       selectionHighlights: [],
       pixelHighlightImage: "",
       pixelHighlightImageScale: 1,
+      botPositionsRaw: {},
+      botPositions: {},
       maintenanceMode: false,
       sessionExpired: false,
       noConnection: false
@@ -213,6 +218,11 @@ export default {
       // cancel highlight transition effect
       let selectedPixelDiv = this.$refs.selectedPixelDiv;
       selectedPixelDiv.style.transition = 'none'
+
+      let markers = document.querySelectorAll('.map-marker-transition');
+      markers.forEach(function(el) {
+        el.classList.remove("map-marker-transition")
+      });
     },
     refreshOverlays() {
       if (this.instance) {
@@ -225,6 +235,7 @@ export default {
         this.updateSelectedPixelHighlight(baseX, baseY, scale)
         this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
+        this.updateBotPositions(baseX, baseY, scale)
       }
     },
     resetHighlightAnimation() {
@@ -276,6 +287,35 @@ export default {
         this.pixelHighlightImageScale = 1.5
       }
     },
+    updateBotPositions(baseX, baseY, scale) {
+      this.botPositions = {}
+      let posRaw = this.botPositionsRaw
+
+      let markers = document.querySelectorAll('.map-marker');
+      markers.forEach(function(el) {
+        el.classList.add("map-marker-transition")
+      });
+
+      for (let key in posRaw) {
+        if (posRaw.hasOwnProperty(key)) {
+          let posRawEntry = posRaw[key]
+
+          let imageScale = scale
+          if (scale >= 8) {
+            imageScale = 4 + scale * 0.5
+          }
+          let rotation = Math.round((posRawEntry["rotation"] + 180) / 30) * 30
+          let pos = {
+            left: baseX + posRawEntry.x * scale + 'px',
+            top: baseY + posRawEntry.y * scale + 'px',
+            width: imageScale * 5 + 'px',
+            height: imageScale * 7 + 'px',
+            transform: "translate(-50%, -50%) rotate(" + rotation + "deg)"
+          }
+          this.botPositions[key] = pos;
+        }
+      }
+    },
     sendStatusUpdate() {
       let statusUpdate = {
         sessionId: this.sessionId,
@@ -301,6 +341,7 @@ export default {
         }
 
         this.selectionHighlightsRaw = data["highlights"]
+        this.botPositionsRaw = data["botPositions"]
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
@@ -399,7 +440,6 @@ export default {
   position: absolute;
   display: none;
   pointer-events: none;
-  transition: all 1s ease-out;
   animation: breathe 1.5s ease-in-out infinite;
 }
 
@@ -418,6 +458,16 @@ export default {
 .selection-highlight {
   position: absolute;
   pointer-events: none;
+}
+
+.map-marker {
+  position: absolute;
+  pointer-events: none;
+  /*transform-origin: top center;*/
+}
+
+.map-marker-transition {
+  transition: left 1.5s linear, top 1.5s linear, transform 500ms linear;
 }
 
 @keyframes breathe {

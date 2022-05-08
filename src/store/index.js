@@ -11,7 +11,8 @@ export default new Vuex.Store({
         sessionId: null,
         identity: null,
         authToken: null,
-        cooldownSecondsLeft: 0
+        cooldownSecondsLeft: 0,
+        cooldownActive: false
     },
     mutations: {
         setSessionId(state, sessionId) {

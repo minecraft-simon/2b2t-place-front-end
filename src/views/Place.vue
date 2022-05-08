@@ -290,7 +290,6 @@ export default {
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
-        this.$store.state.cooldownSecondsLeft = data["cooldownSecondsLeft"]
         this.maintenanceMode = data["maintenanceMode"]
 
         pollingTimeout = data["pollingDelay"]
@@ -308,7 +307,7 @@ export default {
           color: color
         }
         if (this.identity !== null) {
-          if (this.$store.state.cooldownSecondsLeft === 0) {
+          if (!this.$store.state.cooldownActive) {
             this.$store.dispatch("putRequest", ["pixels", pixel, this.sendPixelCallback])
           } else {
             this.placeCooldownSound.play();
@@ -324,7 +323,6 @@ export default {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
         window.mitt.emit("setCooldown", [pixel["cooldownSeconds"], pixel["cooldownSeconds"]])
-        this.$store.state.cooldownSecondsLeft = pixel["cooldownSeconds"]
         this.playColorSound();
       } else {
         this.placeCooldownSound.play();

@@ -86,7 +86,9 @@ export default {
         if (difference > 3) { // if new cooldown end time differs from old value by more than 3 seconds, update that value
           this.cooldownEnd = cooldownEnd
         }
+        this.$store.state.cooldownActive = true
       }
+
     },
     recalculateCooldownState() {
       let now = new Date()
@@ -103,6 +105,7 @@ export default {
         this.showCooldownBar = false
         setTimeout(this.resetProgressBarValue, 500)
         this.cooldownOverSound.play()
+        this.$store.state.cooldownActive = false
       }
     },
     resetProgressBarValue() {

@@ -23,6 +23,13 @@ export default new Vuex.Store({
         },
         setAuthToken(state, authToken) {
             state.authToken = authToken
+        },
+        resetIdentity(state) {
+            Vue.$cookies.remove("2b2t-our-place-identity")
+            Vue.$cookies.remove("2b2t-our-place-token")
+            state.identity = null
+            state.authToken = null
+            axios.defaults.headers.common["Authorization"] = null;
         }
     },
     actions: {
@@ -80,7 +87,10 @@ export default new Vuex.Store({
                         callback(response.data);
                     }
                 })
-                .catch(reason => {
+                .catch(error => {
+                    if (error.response && error.response.status === 401 && endpoint === "status") {
+                        commit("resetIdentity")
+                    }
                     if (callback) {
                         callback(null);
                     }

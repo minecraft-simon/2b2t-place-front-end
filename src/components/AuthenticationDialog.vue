@@ -115,8 +115,8 @@
             <div class="d-flex justify-center">
               <a href="https://discord.gg/AtkWp8DBtm" target="_blank" class="grey--text text--darken-3">
                 <div class="d-flex align-baseline">
-                  <div>
-                    <v-icon small color="#7289da" class="mr-1">mdi-discord</v-icon>
+                  <div class="text-decoration-none">
+                    <v-icon small color="#7289da" class="mr-1 text-decoration-none">mdi-discord</v-icon>
                   </div>
                   <div>Contact us on Discord!</div>
                 </div>

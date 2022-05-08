@@ -1,27 +1,29 @@
 <template>
   <div id="placePage" class="fill-height">
 
-    <div v-show="maintenanceMode || sessionExpired" class="fill-height">
+    <div v-show="maintenanceMode || sessionExpired || noConnection" class="fill-height">
       <div class="d-flex justify-center align-center fill-height">
         <v-sheet rounded elevation="5" class="pa-4">
           <div class="d-flex flex-column align-center">
-            <div v-text="sessionExpired ? 'Your Session has Expired' : 'our/place is in maintenance mode'"
-                 class="text-h5 text-center"></div>
+            <div v-text="blockingOverlayTitle" class="text-h5 text-center"></div>
             <div v-if="sessionExpired" class="text-body-1 mt-4">Please reload the page.</div>
             <v-btn v-if="sessionExpired" class="mt-4" color="grey darken-3" dark @click="reloadPage">
               <v-icon left>mdi-reload</v-icon>
               Reload
             </v-btn>
-            <div v-if="maintenanceMode" class="text-body-1 mt-4">Please wait.</div>
-            <div v-if="maintenanceMode" class="text-body-1 mt-2 text-center">
+            <div v-if="(maintenanceMode || noConnection) && !sessionExpired" class="text-body-1 mt-4">Please wait.</div>
+            <div v-if="maintenanceMode && !sessionExpired" class="text-body-1 mt-2 text-center">
               The web page will automatically refresh as soon as maintenance is over.
+            </div>
+            <div v-if="noConnection && !sessionExpired" class="text-body-1 mt-2 text-center">
+              This message will automatically disappear as soon as the server responds again.
             </div>
           </div>
         </v-sheet>
       </div>
     </div>
 
-    <div v-show="!(maintenanceMode || sessionExpired)" class="fill-height">
+    <div v-show="!(maintenanceMode || sessionExpired || noConnection)" class="fill-height">
       <AppBar></AppBar>
       <v-main class="fill-height">
         <div id="placeContainer" ref="clickReceiver">
@@ -49,7 +51,7 @@
         </div>
       </v-main>
       <PlaceFooter ref="placeFooter"></PlaceFooter>
-      <HowToUseDialog v-if="!maintenanceMode"></HowToUseDialog>
+      <HowToUseDialog v-if="!(maintenanceMode || noConnection || sessionExpired)"></HowToUseDialog>
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
@@ -92,7 +94,8 @@ export default {
       pixelHighlightImage: "",
       pixelHighlightImageScale: 1,
       maintenanceMode: false,
-      sessionExpired: false
+      sessionExpired: false,
+      noConnection: false
     }
   },
   components: {
@@ -106,6 +109,17 @@ export default {
     },
     sessionId() {
       return this.$store.state.sessionId;
+    },
+    blockingOverlayTitle() {
+      if (this.sessionExpired) {
+        return "Your Session has Expired"
+      }
+      if (this.maintenanceMode) {
+        return "our/place is in maintenance mode"
+      }
+      if (this.noConnection) {
+        return "No connection to the server..."
+      }
     }
   },
   setup() {
@@ -115,8 +129,6 @@ export default {
     const placeCooldownSound = useSound(placeCooldownSoundFile)
 
     const playPixelSound = () => {
-      //playbackRate.value = Math.random() / 5 + 0.9
-      playbackRate.value = 1
       pixelSound.stop()
       pixelSound.play()
     }
@@ -279,6 +291,8 @@ export default {
           return;
         }
 
+        this.noConnection = false
+
         // handle player auth data
         let identity = data["identity"];
         let authToken = data["authToken"];
@@ -295,6 +309,7 @@ export default {
         pollingTimeout = data["pollingDelay"]
         this.refreshOverlays()
       } else {
+        this.noConnection = true
         pollingTimeout = 5000
       }
       setTimeout(this.sendStatusUpdate, pollingTimeout);

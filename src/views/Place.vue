@@ -337,7 +337,10 @@ export default {
     sendPixelCallback(pixel) {
       if (pixel) {
         window.mitt.emit("updatePixel", pixel)
-        window.mitt.emit("setCooldown", [pixel["cooldownSeconds"], pixel["cooldownSeconds"]])
+        let cooldownSeconds = pixel["cooldownSeconds"]
+        if (cooldownSeconds > 0) {
+          window.mitt.emit("setCooldown", [cooldownSeconds, cooldownSeconds])
+        }
         this.playColorSound();
       } else {
         this.placeCooldownSound.play();

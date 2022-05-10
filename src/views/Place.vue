@@ -34,10 +34,6 @@
               <Map></Map>
             </panZoom>
           </div>
-          <div id="selectedPixelDiv" ref="selectedPixelDiv">
-            <v-img :src="pixelHighlightImage" class="selected-pixel-image"
-                   :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
-          </div>
           <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight"
                :style="highlight">
             <v-img :src="pixelHighlightImage" class="highlight-image"
@@ -49,7 +45,12 @@
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
           </div>
           <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition" :style="value">
-            <v-img src="@/assets/map-markers/on-map.png" class="interpolation-nn"></v-img>
+            <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png" class="interpolation-nn on-map-marker"></v-img>
+            <v-img v-else src="@/assets/map-markers/outside.png" class="interpolation-nn outside-marker"></v-img>
+          </div>
+          <div id="selectedPixelDiv" ref="selectedPixelDiv">
+            <v-img :src="pixelHighlightImage" class="selected-pixel-image"
+                   :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
         </div>
       </v-main>
@@ -304,15 +305,29 @@ export default {
           if (scale >= 8) {
             imageScale = 4 + scale * 0.5
           }
-          let rotation = Math.round((posRawEntry["rotation"] + 180) / 30) * 30
-          let pos = {
-            left: baseX + posRawEntry.x * scale + 'px',
-            top: baseY + posRawEntry.y * scale + 'px',
-            width: imageScale * 5 + 'px',
-            height: imageScale * 7 + 'px',
-            transform: "translate(-50%, -50%) rotate(" + rotation + "deg)"
+          if (!isNaN(posRawEntry["rotation"])) {
+            let rotation = Math.round((posRawEntry["rotation"] + 180) / 30) * 30
+            let pos = {
+              left: baseX + posRawEntry.x * scale + 'px',
+              top: baseY + posRawEntry.y * scale + 'px',
+              width: imageScale * 5 + 'px',
+              height: imageScale * 7 + 'px',
+              transform: "translate(-50%, -50%) rotate(" + rotation + "deg)",
+              onMap: true
+            }
+            this.botPositions[key] = pos;
+          } else {
+            let pos = {
+              left: baseX + posRawEntry.x * scale + 'px',
+              top: baseY + posRawEntry.y * scale + 'px',
+              width: imageScale * 6 + 'px',
+              height: imageScale * 6 + 'px',
+              transform: "translate(-50%, -50%)",
+              onMap: false
+            }
+            this.botPositions[key] = pos;
           }
-          this.botPositions[key] = pos;
+
         }
       }
     },
@@ -467,7 +482,19 @@ export default {
 }
 
 .map-marker-transition {
-  transition: left 1.5s linear, top 1.5s linear, transform 500ms linear;
+  transition: left 1.2s linear, top 1.2s linear; /*, transform 500ms linear;*/
+}
+
+.on-map-marker {
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+}
+
+.outside-marker {
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
 }
 
 @keyframes breathe {

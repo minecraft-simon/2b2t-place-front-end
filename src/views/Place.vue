@@ -52,7 +52,7 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div class="selected-pixel-label" style="font-size">
+          <div v-if="false" class="selected-pixel-label" style="font-size: 12pt">
             <v-sheet rounded elevation="4" class="ma-2 mb-md-3 mb-lg-4 mb-xl-5 align-self-start align-self-sm-auto" style="display: inline-block">
               <div class="mx-5 my-2 font-weight-regular">Cooldown</div>
             </v-sheet>

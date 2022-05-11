@@ -52,6 +52,11 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
+          <div class="selected-pixel-label" style="font-size">
+            <v-sheet rounded elevation="4" class="ma-2 mb-md-3 mb-lg-4 mb-xl-5 align-self-start align-self-sm-auto" style="display: inline-block">
+              <div class="mx-5 my-2 font-weight-regular">Cooldown</div>
+            </v-sheet>
+          </div>
         </div>
       </v-main>
       <PlaceFooter ref="placeFooter"></PlaceFooter>
@@ -95,6 +100,7 @@ export default {
       canvasScale: 10,
       selectionHighlightsRaw: [],
       selectionHighlights: [],
+      selectedPixelLabel: {},
       pixelHighlightImage: "",
       pixelHighlightImageScale: 1,
       botPositionsRaw: {},
@@ -488,13 +494,13 @@ export default {
 .on-map-marker {
   width: 100%;
   height: 100%;
-  opacity: 0.6;
+  opacity: 1;
 }
 
 .outside-marker {
   width: 100%;
   height: 100%;
-  opacity: 0.3;
+  opacity: 0.6;
 }
 
 @keyframes breathe {

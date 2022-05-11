@@ -494,7 +494,7 @@ export default {
 .on-map-marker {
   width: 100%;
   height: 100%;
-  opacity: 1;
+  opacity: 0.6;
 }
 
 .outside-marker {

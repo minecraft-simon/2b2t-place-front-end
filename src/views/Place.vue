@@ -271,7 +271,9 @@ export default {
       selectedPixelDiv.style.display = "block";
     },
     updateSelectionHighlights(baseX, baseY, scale) {
+      console.log("before")
       this.selectionHighlights = []
+      console.log("after")
       let length = Math.min(this.selectionHighlightsRaw.length, 50);
       for (let i = 0; i < length; i++) {
         let selection = this.selectionHighlightsRaw[i]

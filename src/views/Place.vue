@@ -44,17 +44,19 @@
             <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
           </div>
-          <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition" :style="value">
-            <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png" class="interpolation-nn on-map-marker"></v-img>
+          <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition"
+               :style="value">
+            <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png"
+                   class="interpolation-nn on-map-marker"></v-img>
             <v-img v-else src="@/assets/map-markers/outside.png" class="interpolation-nn outside-marker"></v-img>
           </div>
           <div id="selectedPixelDiv" ref="selectedPixelDiv">
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div v-if="false" class="selected-pixel-label" style="font-size: 12pt">
-            <v-sheet rounded elevation="4" class="ma-2 mb-md-3 mb-lg-4 mb-xl-5 align-self-start align-self-sm-auto" style="display: inline-block">
-              <div class="mx-5 my-2 font-weight-regular">Cooldown</div>
+          <div class="selected-pixel-label" :style="highlightLastPlayerNameStyle">
+            <v-sheet rounded elevation="4" class="">
+              <div class="mx-2 font-weight-regular" v-text="highlightLastPlayerName"></div>
             </v-sheet>
           </div>
         </div>
@@ -109,7 +111,9 @@ export default {
       botPositions: {},
       maintenanceMode: false,
       sessionExpired: false,
-      noConnection: false
+      noConnection: false,
+      highlightLastPlayerName: "",
+      highlightLastPlayerNameStyle: {}
     }
   },
   components: {
@@ -216,6 +220,7 @@ export default {
       this.instance = instance
     },
     locationSelected(x, y) {
+      this.highlightLastPlayerName = ""
       let barHeight = 64;
       let data = {
         x: x,
@@ -230,7 +235,7 @@ export default {
       selectedPixelDiv.style.transition = 'none'
 
       let markers = document.querySelectorAll('.map-marker-transition');
-      markers.forEach(function(el) {
+      markers.forEach(function (el) {
         el.classList.remove("map-marker-transition")
       });
     },
@@ -243,6 +248,7 @@ export default {
         let baseY = panZoomTransform.y
 
         this.updateSelectedPixelHighlight(baseX, baseY, scale)
+        this.updateLastPlayerName(baseX, baseY, scale)
         this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
         this.updateBotPositions(baseX, baseY, scale)
@@ -269,6 +275,18 @@ export default {
       selectedPixelDiv.style.width = scale + 'px';
       selectedPixelDiv.style.height = scale + 'px';
       selectedPixelDiv.style.display = "block";
+    },
+    updateLastPlayerName(baseX, baseY, scale) {
+      if (!this.selectedPixelPos) {
+        return;
+      }
+      let x = baseX + this.selectedPixelPos.x * scale
+      let y = baseY + this.selectedPixelPos.y * scale
+      this.highlightLastPlayerNameStyle = {
+        left: x + 'px',
+        top: y + 'px',
+        transform: "translate(-50%, -100%) translate(" + (scale / 2) + "px, -" + (scale / 5) + "px)"
+      }
     },
     updateSelectionHighlights(baseX, baseY, scale) {
       this.selectionHighlights.length = 0
@@ -304,7 +322,7 @@ export default {
       let posRaw = this.botPositionsRaw
 
       let markers = document.querySelectorAll('.map-marker');
-      markers.forEach(function(el) {
+      markers.forEach(function (el) {
         el.classList.add("map-marker-transition")
       });
 
@@ -375,6 +393,7 @@ export default {
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
         this.maintenanceMode = data["maintenanceMode"]
         window.mitt.emit("setLaunchTimestamp", data["launchTimestamp"])
+        this.highlightLastPlayerName = data["highlightLastPlayerName"]
 
         pollingTimeout = data["pollingDelay"]
         this.refreshOverlays()
@@ -521,6 +540,12 @@ export default {
   100% {
     transform: scale(1.3);
   }
+}
+
+.selected-pixel-label {
+  position: absolute;
+  pointer-events: none;
+  font-size: 12pt;
 }
 
 </style>

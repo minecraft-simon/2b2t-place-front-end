@@ -243,7 +243,7 @@ export default {
         let baseY = panZoomTransform.y
 
         this.updateSelectedPixelHighlight(baseX, baseY, scale)
-        //this.updateSelectionHighlights(baseX, baseY, scale)
+        this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
         this.updateBotPositions(baseX, baseY, scale)
       }
@@ -275,14 +275,16 @@ export default {
       let length = Math.min(this.selectionHighlightsRaw.length, 50);
       for (let i = 0; i < length; i++) {
         let selection = this.selectionHighlightsRaw[i]
-        let highlight = {
-          left: baseX + selection.x * scale + 'px',
-          top: baseY + selection.y * scale + 'px',
-          width: scale + 'px',
-          height: scale + 'px',
-          identifier: selection.x + "_" + selection.y
+        if (selection != null) {
+          let highlight = {
+            left: baseX + selection.x * scale + 'px',
+            top: baseY + selection.y * scale + 'px',
+            width: scale + 'px',
+            height: scale + 'px',
+            identifier: selection.x + "_" + selection.y
+          }
+          this.selectionHighlights.push(highlight);
         }
-        this.selectionHighlights.push(highlight);
       }
     },
     configPixelHighlightImage(scale) {

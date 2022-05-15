@@ -11,15 +11,15 @@
           <div class="text-center text-h4">our/place</div>
           <div class="text-center text-h5 font-weight-light mt-1">will launch in</div>
           <div class="d-flex flex-row justify-center text-h4 mt-2">
-            <div class="">0</div>
+            <div class="" v-text="hours">0</div>
             <div class="ml-2 font-weight-light">hours</div>
           </div>
           <div class="d-flex flex-row justify-center text-h4 mt-2">
-            <div class="">0</div>
+            <div class="" v-text="minutes">0</div>
             <div class="ml-2 font-weight-light">minutes</div>
           </div>
           <div class="d-flex flex-row justify-center text-h4 mt-2">
-            <div class="">0</div>
+            <div class="" v-text="seconds">0</div>
             <div class="ml-2 font-weight-light">seconds</div>
           </div>
         </div>
@@ -47,7 +47,16 @@ export default {
   },
   mounted() {
     window.mitt.on("setLaunchTimestamp", timestamp => {
-
+      let launch = new Date(timestamp * 1000);
+      let diff = Math.floor((launch - new Date()) / 1000)
+      if (diff > 0) {
+        this.hours = Math.floor(diff / 3600)
+        this.minutes = Math.floor(diff / 60 % 60)
+        this.seconds = Math.floor(diff % 60)
+        this.dialogOpen = true
+      } else {
+        this.dialogOpen = false
+      }
     })
   },
   methods: {

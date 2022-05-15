@@ -23,6 +23,9 @@
             </v-btn>
           </v-col>
         </v-row>
+        <div class="d-flex justify-center mt-2 mb-1">
+          <v-btn outlined @click="closeDialog">Close</v-btn>
+        </div>
       </v-container>
     </v-card>
   </v-dialog>

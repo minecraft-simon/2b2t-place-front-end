@@ -16,9 +16,10 @@
             <v-icon>mdi-download</v-icon>
           </v-btn>
         </template>
-        <div class="text-body-1 black--text" data-target="mapart">Mapart Download</div>
+        <div class="text-body-1 black--text" data-target="mapart">Download the Mapart</div>
       </v-tooltip>
 
+      <!--
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">
           <v-btn fab small @click="externalTargetClicked('reddit')">
@@ -29,7 +30,7 @@
              style="width: 154.86px; letter-spacing: 0.04em !important;">
           Visit our Subreddit
         </div>
-      </v-tooltip>
+      </v-tooltip> -->
 
       <v-tooltip v-model="showTooltip" left color="#f5f5f5" transition="slide-x-reverse-transition">
         <template v-slot:activator="{ on, attrs }">

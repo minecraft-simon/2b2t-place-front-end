@@ -15,7 +15,7 @@
             <div v-if="maintenanceMode && !sessionExpired" class="text-body-1 mt-2 text-center">
               The web page will automatically refresh as soon as maintenance is over.
             </div>
-            <div v-if="noConnection && !sessionExpired" class="text-body-1 mt-2 text-center">
+            <div v-if="noConnection && !sessionExpired && !maintenanceMode" class="text-body-1 mt-2 text-center">
               This message will automatically disappear as soon as the server responds again.
             </div>
           </div>
@@ -64,6 +64,7 @@
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
+      <BlockingCountdown></BlockingCountdown>
     </div>
 
     <CooldownBar ref="cooldownBar" style="position: absolute; left: 0; right: 0"></CooldownBar>
@@ -88,6 +89,7 @@ import HowToUseDialog from "@/components/HowToUseDialog";
 import {ref} from "@vue/composition-api";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import CooldownBar from "@/components/CooldownBar";
+import BlockingCountdown from "@/components/BlockingCountdown";
 
 window.mitt = window.mitt || new mitt();
 
@@ -111,6 +113,7 @@ export default {
     }
   },
   components: {
+    BlockingCountdown,
     CooldownBar,
     FloatingActionButton,
     HowToUseDialog, AppBar, SelectPixelDialog, AuthenticationDialog, ColorChooserDialog, Map, PlaceFooter
@@ -363,10 +366,13 @@ export default {
 
         this.selectionHighlightsRaw = data["highlights"]
         this.botPositionsRaw = data["botPositions"]
+        this.$store.state.availableChatBots = data["chatBots"]
+
         let pixelString = window.atob(data["pixelGrid"]["pixels"])
         window.mitt.emit("setPixelGrid", pixelString)
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
         this.maintenanceMode = data["maintenanceMode"]
+        window.mitt.emit("setLaunchTimestamp", data["launchTimestamp"])
 
         pollingTimeout = data["pollingDelay"]
         this.refreshOverlays()

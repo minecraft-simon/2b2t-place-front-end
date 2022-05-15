@@ -21,6 +21,16 @@
 </template>
 
 <script>
+import {useSound} from '@vueuse/sound';
+import noAuthSoundFile from '@/assets/sounds/no-auth.mp3';
+import mitt from "mitt";
+import {ref} from "@vue/composition-api";
+import authSoundFile from "@/assets/sounds/auth-success.mp3";
+import logOutSoundFile from "@/assets/sounds/log-out.mp3";
+import menuCloseSoundFile from "@/assets/sounds/menu-close.mp3";
+
+window.mitt = window.mitt || new mitt();
+
 export default {
   name: "SelectPixelDialog",
   data() {
@@ -31,9 +41,16 @@ export default {
   computed: {
 
   },
+  setup() {
+    const noAuthSound = useSound(noAuthSoundFile)
+    return {
+      noAuthSound
+    }
+  },
   mounted() {
     window.mitt.on("openSelectPixelDialog", () => {
       this.dialogOpen = true
+      this.noAuthSound.play()
     })
   },
   methods: {

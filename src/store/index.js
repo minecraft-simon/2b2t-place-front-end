@@ -12,7 +12,8 @@ export default new Vuex.Store({
         identity: null,
         authToken: null,
         cooldownSecondsLeft: 0,
-        cooldownActive: false
+        cooldownActive: false,
+        availableChatBots: {}
     },
     mutations: {
         setSessionId(state, sessionId) {

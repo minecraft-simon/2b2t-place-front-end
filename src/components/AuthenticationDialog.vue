@@ -30,7 +30,7 @@
               <v-icon color="black" small>mdi-arrow-down</v-icon>
             </div>
 
-            <div class="d-flex flex-row pa-1 mt-4 server-element"
+            <div :class="'d-flex flex-row pa-1 mt-4 server-element ' + (availableChatBots.hasOwnProperty('archive') ? '' : 'server-element-disabled')"
                  style="background-color: black; border: 2px solid #808080"
                  @click="selectAuthServer('archive')">
               <v-img src="@/assets/auth-servers/archive-logo.png" max-width="64" height="64" contain></v-img>
@@ -43,7 +43,7 @@
               </div>
             </div>
 
-            <div class="d-flex flex-row pa-1 mt-3 server-element"
+            <div :class="'d-flex flex-row pa-1 mt-3 server-element ' + (availableChatBots.hasOwnProperty('2b2t') ? '' : 'server-element-disabled')"
                  style="background-color: black; border: 2px solid #808080"
                  @click="selectAuthServer('2b2t')">
               <v-img src="@/assets/auth-servers/2b2t-logo.png" max-width="64" height="64" contain></v-img>
@@ -177,7 +177,6 @@ export default {
       dialogOpen: false,
       authenticationServer: null,
       authCode: null,
-      botName: null,
       pendingAuthExpired: false,
       pendingAuthExpiredTimeout: null,
       loggingOut: true,
@@ -197,6 +196,12 @@ export default {
     },
     playerSkinUrl() {
       return "https://mc-heads.net/player/" + this.identity
+    },
+    availableChatBots() {
+      return this.$store.state.availableChatBots;
+    },
+    botName() {
+      return this.availableChatBots[this.authenticationServer]
     }
   },
   setup() {
@@ -254,12 +259,13 @@ export default {
       this.dialogOpen = false
     },
     selectAuthServer(server) {
-      this.authenticationServer = server
-      this.requestAuthCode();
+      if (this.availableChatBots.hasOwnProperty(server)) {
+        this.authenticationServer = server
+        this.requestAuthCode();
+      }
     },
     requestAuthCode() {
       this.authCode = null
-      this.botName = null
       this.pendingAuthExpired = false
       let payload = {
         sessionId: this.sessionId,
@@ -270,9 +276,8 @@ export default {
     },
     requestAuthCodeCallback(data) {
       if (data) {
-        this.authCode = data["authCode"];
-        this.botName = data["botName"];
-        let expirySeconds = data["expirySeconds"];
+        this.authCode = data["authCode"]
+        let expirySeconds = data["expirySeconds"]
         // start timeout to show expiry of auth code
         let pendingAuthExpiredFunc = this.setPendingAuthExpired
         clearTimeout(this.pendingAuthExpiredTimeout)
@@ -321,6 +326,12 @@ export default {
 
 .server-element:hover {
   filter: contrast(0.9) brightness(1.2) drop-shadow(2px 2px 4px #222);
+}
+
+.server-element-disabled, .server-element-disabled:hover {
+  cursor: auto;
+  filter: contrast(0.1) brightness(1.8);
+
 }
 
 .text-highlight {

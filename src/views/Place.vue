@@ -55,10 +55,11 @@
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
           <div class="selected-pixel-label">
-            <v-sheet rounded elevation="4" class="">
+            <v-sheet rounded elevation="4" class="" :style="'opacity: ' + (highlightLastPlayerName === '' ? 0 : 1)">
               <div class="d-flex flex-row align-center px-2">
-                <div class="font-weight-regular mr-2" v-text="highlightLastPlayerString"></div>
-                <v-img :src="playerHeadUrl" v-show="highlightLastPlayerName !== ''" width="20" height="20"></v-img>
+                <div class="mr-2 font-weight-light">Placed by:</div>
+                <v-img :src="playerHeadUrl" width="20" height="20"></v-img>
+                <div class="ml-1" v-text="highlightLastPlayerName"></div>
               </div>
             </v-sheet>
           </div>

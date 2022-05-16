@@ -54,9 +54,9 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div class="selected-pixel-label" :style="highlightLastPlayerNameStyle">
+          <div v-if="highlightLastPlayerName" class="selected-pixel-label" :style="highlightLastPlayerNameStyle">
             <v-sheet rounded elevation="4" class="">
-              <div class="mx-2 font-weight-regular" v-text="highlightLastPlayerName"></div>
+              <div class="mx-2 font-weight-regular" v-text="'Placed by: ' + highlightLastPlayerName"></div>
             </v-sheet>
           </div>
         </div>
@@ -283,9 +283,9 @@ export default {
       let x = baseX + this.selectedPixelPos.x * scale
       let y = baseY + this.selectedPixelPos.y * scale
       this.highlightLastPlayerNameStyle = {
-        left: x + 'px',
-        top: y + 'px',
-        transform: "translate(-50%, -100%) translate(" + (scale / 2) + "px, -" + (scale / 5) + "px)"
+        /*left: x + 'px',
+        top: y + 'px'
+        transform: "translate(-50%, -100%) translate(" + (scale / 2) + "px, -" + (scale / 5) + "px)"*/
       }
     },
     updateSelectionHighlights(baseX, baseY, scale) {
@@ -544,6 +544,7 @@ export default {
 
 .selected-pixel-label {
   position: absolute;
+  left: 10px;
   pointer-events: none;
   font-size: 12pt;
 }

@@ -550,7 +550,7 @@ export default {
   position: absolute;
   left: 10px;
   pointer-events: none;
-  font-size: 12pt;
+  font-size: 16pt;
 }
 
 </style>

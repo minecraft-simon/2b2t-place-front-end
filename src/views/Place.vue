@@ -54,9 +54,9 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
-          <div v-if="highlightLastPlayerName" class="selected-pixel-label" :style="highlightLastPlayerNameStyle">
+          <div class="selected-pixel-label">
             <v-sheet rounded elevation="4" class="">
-              <div class="mx-2 font-weight-regular" v-text="'Placed by: ' + highlightLastPlayerName"></div>
+              <div class="mx-2 font-weight-regular" v-text="highlightLastPlayerName"></div>
             </v-sheet>
           </div>
         </div>
@@ -392,7 +392,12 @@ export default {
         window.mitt.emit("setCooldown", [data["cooldownSeconds"], data["cooldownSecondsLeft"]])
         this.maintenanceMode = data["maintenanceMode"]
         window.mitt.emit("setLaunchTimestamp", data["launchTimestamp"])
-        this.highlightLastPlayerName = data["highlightLastPlayerName"]
+        let lastPlayer = data["highlightLastPlayerName"]
+        if (lastPlayer !== "") {
+          this.highlightLastPlayerName = "Placed by: " + lastPlayer
+        } else {
+          this.highlightLastPlayerName = ""
+        }
 
         pollingTimeout = data["pollingDelay"]
         this.refreshOverlays()

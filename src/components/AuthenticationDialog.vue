@@ -78,7 +78,7 @@
             <div class="text-body-2 mt-4" style="text-decoration: underline">Step 2:</div>
 
             <div v-if="pendingAuthExpired">
-              <div class="text-body-1">Your authentication-code has expired. Please request a new one.</div>
+              <div class="text-body-1">Your authentication-code has expired. Please request a new one to continue.</div>
               <v-btn small block outlined class="mt-1" @click="requestAuthCode">Request new auth code</v-btn>
             </div>
             <div v-else-if="!(authCode && botName)">

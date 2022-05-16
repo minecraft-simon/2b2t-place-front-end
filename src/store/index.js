@@ -82,7 +82,7 @@ export default new Vuex.Store({
                 });
         },
         putRequest({commit}, [endpoint, data, callback]) {
-            axios.put("/" + endpoint, data, {timeout: 5000})
+            axios.put("/" + endpoint, data, {timeout: 10000})
                 .then(response => {
                     if (callback) {
                         callback(response.data);

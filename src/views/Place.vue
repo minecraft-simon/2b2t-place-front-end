@@ -56,7 +56,10 @@
           </div>
           <div class="selected-pixel-label">
             <v-sheet rounded elevation="4" class="">
-              <div class="mx-2 font-weight-regular" v-text="highlightLastPlayerName"></div>
+              <div class="d-flex flex-row align-center px-2">
+                <div class="font-weight-regular mr-2" v-text="highlightLastPlayerString"></div>
+                <v-img :src="playerHeadUrl" v-show="highlightLastPlayerName !== ''" width="20" height="20"></v-img>
+              </div>
             </v-sheet>
           </div>
         </div>
@@ -113,7 +116,7 @@ export default {
       sessionExpired: false,
       noConnection: false,
       highlightLastPlayerName: "",
-      highlightLastPlayerNameStyle: {}
+      highlightLastPlayerString: ""
     }
   },
   components: {
@@ -139,6 +142,9 @@ export default {
       if (this.noConnection) {
         return "No connection to the server..."
       }
+    },
+    playerHeadUrl() {
+      return "https://mc-heads.net/avatar/" + this.highlightLastPlayerName
     }
   },
   setup() {
@@ -247,7 +253,6 @@ export default {
         let baseY = panZoomTransform.y
 
         this.updateSelectedPixelHighlight(baseX, baseY, scale)
-        //this.updateLastPlayerName(baseX, baseY, scale)
         this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
         this.updateBotPositions(baseX, baseY, scale)
@@ -274,18 +279,6 @@ export default {
       selectedPixelDiv.style.width = scale + 'px';
       selectedPixelDiv.style.height = scale + 'px';
       selectedPixelDiv.style.display = "block";
-    },
-    updateLastPlayerName(baseX, baseY, scale) {
-      if (!this.selectedPixelPos) {
-        return;
-      }
-      let x = baseX + this.selectedPixelPos.x * scale
-      let y = baseY + this.selectedPixelPos.y * scale
-      this.highlightLastPlayerNameStyle = {
-        /*left: x + 'px',
-        top: y + 'px'
-        transform: "translate(-50%, -100%) translate(" + (scale / 2) + "px, -" + (scale / 5) + "px)"*/
-      }
     },
     updateSelectionHighlights(baseX, baseY, scale) {
       this.selectionHighlights.length = 0
@@ -393,10 +386,11 @@ export default {
         this.maintenanceMode = data["maintenanceMode"]
         window.mitt.emit("setLaunchTimestamp", data["launchTimestamp"])
         let lastPlayer = data["highlightLastPlayerName"]
+        this.highlightLastPlayerName = lastPlayer
         if (lastPlayer !== "") {
-          this.highlightLastPlayerName = "Placed by: " + lastPlayer
+          this.highlightLastPlayerString = "Placed by: " + lastPlayer
         } else {
-          this.highlightLastPlayerName = ""
+          this.highlightLastPlayerString = ""
         }
 
         pollingTimeout = data["pollingDelay"]

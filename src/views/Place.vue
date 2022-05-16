@@ -248,7 +248,7 @@ export default {
         let baseY = panZoomTransform.y
 
         this.updateSelectedPixelHighlight(baseX, baseY, scale)
-        this.updateLastPlayerName(baseX, baseY, scale)
+        //this.updateLastPlayerName(baseX, baseY, scale)
         this.updateSelectionHighlights(baseX, baseY, scale)
         this.configPixelHighlightImage(panZoomScale)
         this.updateBotPositions(baseX, baseY, scale)

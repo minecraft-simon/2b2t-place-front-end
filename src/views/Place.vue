@@ -220,7 +220,6 @@ export default {
       this.instance = instance
     },
     locationSelected(x, y) {
-      this.highlightLastPlayerName = ""
       let barHeight = 64;
       let data = {
         x: x,

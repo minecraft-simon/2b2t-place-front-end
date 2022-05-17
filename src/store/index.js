@@ -13,7 +13,8 @@ export default new Vuex.Store({
         authToken: null,
         cooldownSecondsLeft: 0,
         cooldownActive: false,
-        availableChatBots: {}
+        availableChatBots: {},
+        cloudflareBlock: false
     },
     mutations: {
         setSessionId(state, sessionId) {
@@ -31,6 +32,9 @@ export default new Vuex.Store({
             state.identity = null
             state.authToken = null
             axios.defaults.headers.common["Authorization"] = null;
+        },
+        setCloudflareBlock(state, cloudflareBlock) {
+            state.cloudflareBlock = cloudflareBlock
         }
     },
     actions: {
@@ -91,6 +95,10 @@ export default new Vuex.Store({
                 .catch(error => {
                     if (error.response && error.response.status === 401 && endpoint === "status") {
                         commit("resetIdentity")
+                    }
+                    if (error.response && error.response.status === 403) {
+                        console.log(error.response.data)
+                        commit("setCloudflareBlock", true)
                     }
                     if (callback) {
                         callback(null);

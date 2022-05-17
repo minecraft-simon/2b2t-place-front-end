@@ -1,29 +1,55 @@
 <template>
   <div id="placePage" class="fill-height">
 
-    <div v-show="maintenanceMode || sessionExpired || noConnection" class="fill-height">
+    <div v-show="maintenanceMode || sessionExpired || noConnection || cloudflareBlock" class="fill-height">
       <div class="d-flex justify-center align-center fill-height">
         <v-sheet rounded elevation="5" class="pa-4">
-          <div class="d-flex flex-column align-center">
-            <div v-text="blockingOverlayTitle" class="text-h5 text-center"></div>
-            <div v-if="sessionExpired" class="text-body-1 mt-4">Please reload the page.</div>
-            <v-btn v-if="sessionExpired" class="mt-4" color="grey darken-3" dark @click="reloadPage">
+
+          <div v-if="sessionExpired" class="d-flex flex-column align-center">
+            <div class="text-h5 text-center">Your Session has Expired</div>
+            <div class="text-body-1 mt-3 text-center">
+              Please reload the page if you want to continue using it.
+            </div>
+            <v-btn outlined class="mt-4" color="grey darken-3" @click="reloadPage">
               <v-icon left>mdi-reload</v-icon>
               Reload
             </v-btn>
-            <div v-if="(maintenanceMode || noConnection) && !sessionExpired" class="text-body-1 mt-4">Please wait.</div>
-            <div v-if="maintenanceMode && !sessionExpired" class="text-body-1 mt-2 text-center">
+          </div>
+
+          <div v-else-if="cloudflareBlock" class="d-flex flex-column align-center">
+            <div class="text-h5 text-center">Cloudflare has suspended your connection</div>
+            <div class="text-body-1 mt-3 text-center">
+              Please reload the page if you want to continue using it.
+            </div>
+            <v-btn outlined class="mt-4" color="grey darken-3" @click="reloadPage">
+              <v-icon left>mdi-reload</v-icon>
+              Reload
+            </v-btn>
+          </div>
+
+          <div v-else-if="maintenanceMode" class="d-flex flex-column align-center">
+            <div class="text-h5 text-center">our/place is in maintenance mode</div>
+            <div class="text-body-1 mt-4">Please wait.</div>
+            <div class="text-body-1 mt-3 text-center">
               The web page will automatically refresh as soon as maintenance is over.
             </div>
-            <div v-if="noConnection && !sessionExpired && !maintenanceMode" class="text-body-1 mt-2 text-center">
+          </div>
+
+          <div v-else-if="noConnection" class="d-flex flex-column align-center">
+            <div class="text-h5 text-center">No connection to the server...</div>
+            <div class="text-body-1 mt-4">Please wait.</div>
+            <div class="text-body-1 mt-3 text-center">
               This message will automatically disappear as soon as the server responds again.
             </div>
           </div>
+
+
+
         </v-sheet>
       </div>
     </div>
 
-    <div v-show="!(maintenanceMode || sessionExpired || noConnection)" class="fill-height">
+    <div v-show="!(maintenanceMode || sessionExpired || noConnection || cloudflareBlock)" class="fill-height">
       <AppBar></AppBar>
       <v-main class="fill-height">
         <div id="placeContainer" ref="clickReceiver">
@@ -34,22 +60,26 @@
               <Map></Map>
             </panZoom>
           </div>
+          <!-- other peoples selection highlights -->
           <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight"
                :style="highlight">
             <v-img :src="pixelHighlightImage" class="highlight-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
+          <!-- selection highlight image preloaders -->
           <div style="opacity: 0; pointer-events: none; width: 10px; height: 10px">
             <v-img src="@/assets/pixel-highlight/1.png" ref="highlight1Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
           </div>
+          <!-- bot positions -->
           <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition"
                :style="value">
             <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png"
                    class="interpolation-nn on-map-marker"></v-img>
             <v-img v-else src="@/assets/map-markers/outside.png" class="interpolation-nn outside-marker"></v-img>
           </div>
+          <!--  -->
           <div id="selectedPixelDiv" ref="selectedPixelDiv">
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
@@ -66,7 +96,7 @@
         </div>
       </v-main>
       <PlaceFooter ref="placeFooter"></PlaceFooter>
-      <HowToUseDialog v-if="!(maintenanceMode || noConnection || sessionExpired)"></HowToUseDialog>
+      <HowToUseDialog v-if="!(maintenanceMode || noConnection || sessionExpired || cloudflareBlock)"></HowToUseDialog>
       <ColorChooserDialog></ColorChooserDialog>
       <SelectPixelDialog></SelectPixelDialog>
       <AuthenticationDialog></AuthenticationDialog>
@@ -133,19 +163,11 @@ export default {
     sessionId() {
       return this.$store.state.sessionId;
     },
-    blockingOverlayTitle() {
-      if (this.sessionExpired) {
-        return "Your Session has Expired"
-      }
-      if (this.maintenanceMode) {
-        return "our/place is in maintenance mode"
-      }
-      if (this.noConnection) {
-        return "No connection to the server..."
-      }
-    },
     playerHeadUrl() {
       return "https://mc-heads.net/avatar/" + this.highlightLastPlayerName
+    },
+    cloudflareBlock() {
+      return this.$store.state.cloudflareBlock;
     }
   },
   setup() {

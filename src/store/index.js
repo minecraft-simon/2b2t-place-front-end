@@ -88,6 +88,7 @@ export default new Vuex.Store({
         putRequest({commit}, [endpoint, data, callback]) {
             axios.put("/" + endpoint, data, {timeout: 10000})
                 .then(response => {
+                    commit("setCloudflareBlock", false)
                     if (callback) {
                         callback(response.data);
                     }

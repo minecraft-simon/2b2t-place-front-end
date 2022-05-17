@@ -60,6 +60,14 @@
               <Map></Map>
             </panZoom>
           </div>
+
+          <!-- bot positions -->
+          <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition"
+               :style="value">
+            <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png"
+                   class="interpolation-nn on-map-marker"></v-img>
+            <v-img v-else src="@/assets/map-markers/outside.png" class="interpolation-nn outside-marker"></v-img>
+          </div>
           <!-- other peoples selection highlights -->
           <div v-for="highlight in selectionHighlights" :key="highlight.identifier" class="selection-highlight"
                :style="highlight">
@@ -72,18 +80,12 @@
             <v-img src="@/assets/pixel-highlight/2.png" ref="highlight2Loader"></v-img>
             <v-img src="@/assets/pixel-highlight/3.png" ref="highlight3Loader"></v-img>
           </div>
-          <!-- bot positions -->
-          <div v-for="(value, name) in botPositions" :key="name" class="map-marker map-marker-transition"
-               :style="value">
-            <v-img v-if="value['onMap']" src="@/assets/map-markers/on-map.png"
-                   class="interpolation-nn on-map-marker"></v-img>
-            <v-img v-else src="@/assets/map-markers/outside.png" class="interpolation-nn outside-marker"></v-img>
-          </div>
-          <!--  -->
+          <!-- selected pixel -->
           <div id="selectedPixelDiv" ref="selectedPixelDiv">
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
+          <!-- last pixel placer name -->
           <div class="selected-pixel-label">
             <v-sheet rounded elevation="4" class="" :style="'opacity: ' + (highlightLastPlayerName === '' ? 0 : 1)">
               <div class="d-flex flex-row align-center px-2">

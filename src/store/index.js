@@ -96,8 +96,7 @@ export default new Vuex.Store({
                     if (error.response && error.response.status === 401 && endpoint === "status") {
                         commit("resetIdentity")
                     }
-                    if (error.response && error.response.status === 403) {
-                        console.log(error.response.data)
+                    if (error.response && error.response.status === 403 && error.response.data.includes("We are checking your browser")) {
                         commit("setCloudflareBlock", true)
                     }
                     if (callback) {

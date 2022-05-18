@@ -85,6 +85,14 @@
             <v-img :src="pixelHighlightImage" class="selected-pixel-image"
                    :style="'transform: scale(' + pixelHighlightImageScale + ')'"></v-img>
           </div>
+          <!-- selection coordinates -->
+          <div class="selection-coordinates-label">
+            <v-sheet rounded elevation="4" class="" :style="'opacity: ' + (selectedPixelPos === null ? 0 : 1)">
+              <div class="d-flex flex-row align-center px-1">
+                <div class="font-weight-light" v-if="selectedPixelPos" v-text="'(' + (selectedPixelPos.x + 1) + ', ' + (selectedPixelPos.y + 1) + ')'"></div>
+              </div>
+            </v-sheet>
+          </div>
           <!-- last pixel placer name -->
           <div class="selected-pixel-label">
             <v-sheet rounded elevation="4" class="" :style="'opacity: ' + (highlightLastPlayerName === '' ? 0 : 1)">
@@ -565,11 +573,20 @@ export default {
   }
 }
 
+.selection-coordinates-label {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  pointer-events: none;
+  font-size: 12pt;
+}
+
 .selected-pixel-label {
   position: absolute;
-  left: 10px;
+  left: 5px;
+  top: 35px;
   pointer-events: none;
-  font-size: 16pt;
+  font-size: 14pt;
 }
 
 </style>

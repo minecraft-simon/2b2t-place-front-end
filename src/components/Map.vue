@@ -141,6 +141,7 @@ export default {
   position: absolute;
   /*transform: translate(-16px, -16px) scale(0.88);*/
   /*transform: translate(-50%, -50%);*/
+  filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.2)) drop-shadow(0px 10px 14px rgba(0, 0, 0, 0.14)) drop-shadow(0px 4px 18px rgba(0, 0, 0, 0.12));
 }
 
 #myCanvas {

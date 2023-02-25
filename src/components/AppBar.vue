@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app dark flat class="place-app-bar">
+  <v-app-bar app dark class="place-app-bar">
     <div class="d-flex align-center">
       <v-img class="" contain src="@/assets/logo.png" width="40"/>
       <v-img class="ml-2" contain height="36" max-width="160" src="@/assets/place.png"/>

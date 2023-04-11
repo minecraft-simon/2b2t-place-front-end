@@ -20,7 +20,9 @@ export default {
     $body.style.top = `-${scrollPosition}px`;
     $body.style.width = '100%';
   },
-  methods: {}
+  methods: {
+
+  }
 };
 </script>
 

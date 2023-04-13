@@ -7,6 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@panzoom/panzoom": "^4.5.1",
     "@vue/composition-api": "^1.4.9",
     "@vueuse/sound": "^1.1.7",
     "axios": "^0.26.1",

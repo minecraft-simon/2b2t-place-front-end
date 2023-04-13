@@ -205,8 +205,8 @@ export default {
     }
   },
   setup() {
-    const volume = ref(1)
-    const noAuthSound = useSound(noAuthSoundFile)
+    const volume = ref(0.5)
+    const noAuthSound = useSound(noAuthSoundFile, {volume: 0.35})
     const authSound = useSound(authSoundFile, {volume})
     const logOutSound = useSound(logOutSoundFile, {volume})
     const menuCloseSound = useSound(menuCloseSoundFile)
@@ -219,7 +219,7 @@ export default {
     }
 
     const resetVolume = () => {
-      volume.value = 1
+      volume.value = 0.5
       authSound.stop()
       logOutSound.stop()
     }

@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     let openDialog = this.autoOpenDialog
-    setTimeout(openDialog, 1000);
+    //setTimeout(openDialog, 1000);
   },
   methods: {
     autoOpenDialog() {

@@ -5,7 +5,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/place",
+    path: "/",
     name: "Place",
     component: () =>
         import(/* webpackChunkName: "place" */ "../views/Place.vue")
@@ -13,7 +13,7 @@ const routes = [
   {
     path: "*",
     redirect: to => {
-      return { path: '/place' }
+      return { path: '/' }
     }
   }
 ]

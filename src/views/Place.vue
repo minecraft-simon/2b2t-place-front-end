@@ -53,8 +53,7 @@
             <v-main class="fill-height">
                 <div id="placeContainer" ref="clickReceiver">
                     <div id="panZoomContainer" ref="panZoomContainer">
-                        <panZoom :options="{minZoom: 0.15, maxZoom: 8, initialZoom2: 1, bounds: false, boundsPadding: 0.1, transformOrigin2: {x: 0.5, y: 0.5}}"
-                                 style2="background-color: yellow" class="fill-height"
+                        <panZoom :options="panZoomOptions" ref="panZoom" class="fill-height"
                                  @init="initPanZoom" @transform="panZoomTransform">
                           <Map></Map>
                         </panZoom>
@@ -88,11 +87,11 @@
                     </div>
                     <!-- selection coordinates -->
                     <div class="selection-coordinates-label">
-                        <v-sheet rounded elevation="4" class=""
+                        <v-sheet rounded elevation="1" class="" color="rgba(255, 255, 255, 0.5)"
                                  :style="'opacity: ' + (selectedPixelPos === null ? 0 : 1)">
                             <div class="d-flex flex-row align-center px-1">
                                 <div class="font-weight-light" v-if="selectedPixelPos"
-                                     v-text="'(' + (selectedPixelPos.x + 1) + ', ' + (selectedPixelPos.y + 1) + ')'"></div>
+                                     v-text="'x = ' + (selectedPixelPos.x + 1) + ', y = ' + (selectedPixelPos.y + 1) + ''"></div>
                             </div>
                         </v-sheet>
                     </div>
@@ -143,6 +142,7 @@ import CooldownBar from "@/components/CooldownBar";
 import BlockingCountdown from "@/components/BlockingCountdown";
 import PanzoomComponent from "@/components/PanzoomComponent.vue";
 import Vue from "vue";
+import {sourceMap} from "@vue/cli-service/lib/config/terserOptions";
 
 window.mitt = window.mitt || new mitt();
 
@@ -166,7 +166,10 @@ export default {
             highlightLastPlayerName: "",
             highlightLastPlayerString: "",
 
-            availableMapSpace: [0, 0]
+            panZoomOptions: {minZoom: 0.15, maxZoom: 8, bounds: false },
+            canvasElement: null,
+            mapBackgroundElement: null,
+            viewportDimensions: [0, 0]
         }
     },
     components: {
@@ -232,6 +235,7 @@ export default {
     methods: {
         initEventListeners() {
             window.addEventListener('resize', this.windowResized)
+            this.windowResized()
 
             this.$refs.clickReceiver.addEventListener("mousedown", ev => {
                 let clientX = ev.clientX;
@@ -268,8 +272,7 @@ export default {
             })
         },
         windowResized() {
-            this.availableMapSpace = [this.$refs.panZoomContainer.clientWidth, this.$refs.panZoomContainer.clientHeight]
-            console.log(this.availableMapSpace)
+            this.viewportDimensions = [this.$refs.panZoomContainer.clientWidth, this.$refs.panZoomContainer.clientHeight]
         },
         initPanZoom(instance) {
             this.instance = instance
@@ -283,10 +286,67 @@ export default {
             window.mitt.emit("clickReceiverLocation", data)
         },
         panZoomTransform() {
-            let x = this.instance.getTransform().x
-            let y = this.instance.getTransform().y
-            if (x < 50) {
-                //this.instance.moveTo(50, y)
+            if (this.canvasElement == null) {
+                this.canvasElement = document.querySelector('#myCanvas')
+            }
+            const mapWidth = this.canvasElement.getBoundingClientRect().width;
+            const mapHeight = this.canvasElement.getBoundingClientRect().height;
+            let mapX = this.instance.getTransform().x
+            let mapY = this.instance.getTransform().y
+            const viewportWidth = this.viewportDimensions[0]
+            const viewportHeight = this.viewportDimensions[1]
+            let needsMoving = false
+            const leftoverWidth = viewportWidth - mapWidth
+            const leftoverHeight = viewportHeight - mapHeight
+
+            let minX = 0
+            let overhangX = Math.max(mapWidth - viewportWidth, 0)
+            if (overhangX === 0) {
+                minX = -mapWidth * 0.33
+            } else {
+                minX = -overhangX - viewportWidth * 0.4
+            }
+            if (mapX < minX) {
+                mapX = minX
+                needsMoving = true
+            }
+
+            let minY = 0
+            let overhangY = Math.max(mapHeight - viewportHeight, 0)
+            if (overhangY === 0) {
+                minY = -mapHeight * 0.5
+            } else {
+                minY = -overhangY - viewportHeight * 0.4
+            }
+            if (mapY < minY) {
+                mapY = minY
+                needsMoving = true
+            }
+
+            let maxX = 0
+            if (overhangX === 0) {
+                maxX = viewportWidth - mapWidth * 0.66
+            } else {
+                maxX = viewportWidth * 0.4
+            }
+            if (mapX > maxX) {
+                mapX = maxX
+                needsMoving = true
+            }
+
+            let maxY = 0
+            if (overhangY === 0) {
+                maxY = viewportHeight - mapHeight * 0.5
+            } else {
+                maxY = viewportHeight * 0.4
+            }
+            if (mapY > maxY) {
+                mapY = maxY
+                needsMoving = true
+            }
+
+            if (needsMoving) {
+                this.instance.moveTo(mapX, mapY)
             }
 
             this.refreshOverlays()

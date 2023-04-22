@@ -2,7 +2,7 @@
     <v-app-bar app dark class="place-app-bar">
         <div class="d-flex align-center">
             <v-img class="elevation-1-drop-shadow" contain src="@/assets/logo_rounded.png" width="40"/>
-            <v-img class="ml-3 elevation-1-drop-shadow" contain height="36" max-width="160" src="@/assets/place.svg"/>
+            <v-img class="ml-3 elevation-1-drop-shadow" contain max-height="40" max-width="165" src="@/assets/place.svg"/>
         </div>
 
         <v-spacer></v-spacer>
